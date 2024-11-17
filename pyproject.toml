@@ -1,0 +1,30 @@
+[project]
+name = "helper"
+version = "0.1.0"
+description = "This is a helper for patent examination."
+authors = [{ name = "chenyulue", email = "chenyulue@163.com" }]
+dependencies = [
+    "nativesvttk>=14",
+    "darkdetect>=0.8.0",
+    "pillow>=11.0.0",
+]
+requires-python = ">=3.11,<3.13"
+readme = "README.md"
+license = { text = "MIT" }
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.dev-dependencies]
+test = ["pytest>=8.3.3"]
+package = ["cx-Freeze>=7.2.5"]
+
+[tool.cxfreeze]
+executables = [
+    { script = "src/helper/__main__.py", base = "gui", target_name = "helper", icon = "./src/helper/assets/icons/APP-ICON.ico" },
+]
