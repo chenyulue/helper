@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>693</width>
-    <height>598</height>
+    <height>564</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -40,7 +40,7 @@
      <property name="childrenCollapsible">
       <bool>false</bool>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QGridLayout" name="gridLayout" rowstretch="0,2" columnstretch="1,0,1">
        <item row="0" column="0">
         <widget class="QLabel" name="bLabel">
@@ -86,6 +86,18 @@
          </item>
          <item>
           <widget class="QPushButton" name="cmpButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="baseSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="text">
             <string>比  较</string>
            </property>
@@ -150,7 +162,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="topMargin">
         <number>10</number>
@@ -191,5 +203,54 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>clrButton</sender>
+   <signal>clicked()</signal>
+   <receiver>bText</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>331</x>
+     <y>174</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>266</x>
+     <y>153</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clrButton</sender>
+   <signal>clicked()</signal>
+   <receiver>aText</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>360</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>451</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clrButton</sender>
+   <signal>clicked()</signal>
+   <receiver>resultText</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>349</x>
+     <y>178</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>358</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

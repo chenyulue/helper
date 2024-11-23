@@ -1,0 +1,18 @@
+<RCC>
+  <qresource prefix="icons">
+    <file alias="search_blue.svg">../assets/icons/SEARCH_BLUE.svg</file>
+    <file alias="app_blue.ico">../assets/icons/APP-BLUE.ico</file>
+    <file alias="paste_blue.svg">../assets/icons/PASTE_BLUE.svg</file>
+    <file alias="cut_blue.svg">../assets/icons/CUT_BLUE.svg</file>
+    <file alias="copy_blue.svg">../assets/icons/COPY_BLUE.svg</file>
+    <file alias="close_blue.svg">../assets/icons/CLOSE_BLUE.svg</file>
+    <file alias="doc_blue.svg">../assets/icons/DOC_BLUE.svg</file>
+    <file alias="about_blue.svg">../assets/icons/ABOUT_BLUE.svg</file>
+    <file alias="setting_blue.svg">../assets/icons/SETTING_BLUE.svg</file>
+    <file alias="login_blue.svg">../assets/icons/LOGIN_BLUE.svg</file>
+    <file alias="calendar_blue.svg">../assets/icons/CALENDAR_BLUE.svg</file>
+    <file alias="archive_blue.svg">../assets/icons/ARCHIVE_BLUE.svg</file>
+    <file alias="cmp_blue.svg">../assets/icons/CMP_BLUE.svg</file>
+    <file alias="check_blue.svg">../assets/icons/CHECK_BLUE.svg</file>
+  </qresource>
+</RCC>
