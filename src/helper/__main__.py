@@ -1,20 +1,17 @@
-import tkinter as tk
-import nativesvttk as svttk
+from PyQt5.QtWidgets import (
+    QApplication
+)
+import qdarktheme
 
-from helper.UI import CompareWindow, CheckWindow, SideBar
-from helper.assets import ICON_APP
-from helper.UI._Style import MyStyle
+from helper.UI import Window
 
 def main() -> None:
-    root = tk.Tk()
-    root.iconbitmap(str(ICON_APP))
-    root.rowconfigure(0, weight=1)
-    root.columnconfigure(0, weight=1)
-    SideBar(root).grid(sticky="nsew")
-    svttk.use_light_theme()
-    s = MyStyle()
-    print(s.layout("TButton"))
-    root.mainloop()
+    qdarktheme.enable_hi_dpi()
+    app = QApplication([])
+    qdarktheme.setup_theme("light")
+    win = Window()
+    win.show()
+    app.exec_()
 
 if __name__ == "__main__":
     main()

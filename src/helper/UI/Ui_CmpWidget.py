@@ -20,6 +20,9 @@ class Ui_cmpWidget(object):
         sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(cmpWidget.sizePolicy().hasHeightForWidth())
         cmpWidget.setSizePolicy(sizePolicy)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/icons/avsb_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        cmpWidget.setWindowIcon(icon)
         self.horizontalLayout = QtWidgets.QHBoxLayout(cmpWidget)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.splitter = QtWidgets.QSplitter(cmpWidget)
@@ -125,3 +128,4 @@ class Ui_cmpWidget(object):
         self.cmpButton.setText(_translate("cmpWidget", "比  较"))
         self.clrButton.setText(_translate("cmpWidget", "清  空"))
         self.resultLabel.setText(_translate("cmpWidget", "修改对照:"))
+from . import resources_rc

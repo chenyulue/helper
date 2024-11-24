@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>文本比较</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/avsb_blue.svg</normaloff>:/icons/avsb_blue.svg</iconset>
+  </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QSplitter" name="splitter">
@@ -202,7 +206,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>clrButton</sender>

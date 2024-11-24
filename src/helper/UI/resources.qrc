@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file alias="avsb_blue.svg">../assets/icons/AvsB_BLUE.svg</file>
     <file alias="search_blue.svg">../assets/icons/SEARCH_BLUE.svg</file>
     <file alias="app_blue.ico">../assets/icons/APP-BLUE.ico</file>
     <file alias="paste_blue.svg">../assets/icons/PASTE_BLUE.svg</file>
