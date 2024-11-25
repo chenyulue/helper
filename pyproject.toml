@@ -12,10 +12,12 @@ requires-python = ">=3.11,<3.13"
 readme = "README.md"
 license = { text = "MIT" }
 
+[project.gui-scripts]
+helper = "helper.__main__:main"
+
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
-
 
 [tool.pdm]
 distribution = true

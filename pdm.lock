@@ -4,11 +4,8 @@
 [metadata]
 groups = ["default", "design", "package", "test"]
 strategy = ["inherit_metadata"]
-lock_version = "4.5.0"
-content_hash = "sha256:9468a1e5b9951fff8d4a52cb60cbd24438834591bfa229cec1cfea29982ca8da"
-
-[[metadata.targets]]
-requires_python = ">=3.11,<3.13"
+lock_version = "4.4.1"
+content_hash = "sha256:af590b718549f11bab44be48aa576937f2581e4065c93dff21a3be55d64a647d"
 
 [[package]]
 name = "colorama"
@@ -30,20 +27,9 @@ summary = "Create standalone executables from Python scripts"
 groups = ["package"]
 dependencies = [
     "cx-Logging>=3.1; sys_platform == \"win32\"",
-    "dmgbuild>=1.6.1; sys_platform == \"darwin\"",
-    "filelock>=3.12.3; sys_platform == \"linux\"",
-    "importlib-metadata>=6; python_full_version < \"3.10.2\"",
     "lief<0.16.0,>=0.12.0; sys_platform == \"win32\"",
     "packaging>=24",
-    "patchelf>=0.14; sys_platform == \"linux\" and platform_machine == \"aarch64\"",
-    "patchelf>=0.14; sys_platform == \"linux\" and platform_machine == \"armv7l\"",
-    "patchelf>=0.14; sys_platform == \"linux\" and platform_machine == \"i686\"",
-    "patchelf>=0.14; sys_platform == \"linux\" and platform_machine == \"ppc64le\"",
-    "patchelf>=0.14; sys_platform == \"linux\" and platform_machine == \"s390x\"",
-    "patchelf>=0.14; sys_platform == \"linux\" and platform_machine == \"x86_64\"",
     "setuptools<76,>=65.6.3",
-    "tomli>=2.0.1; python_version < \"3.11\"",
-    "typing-extensions>=4.10.0; python_version < \"3.10\"",
 ]
 files = [
     {file = "cx_Freeze-7.2.5-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:0f69c499b37baed9ca6fe9bb89eed73514d721ae55fe262a3b337bf9322f794c"},
@@ -101,50 +87,6 @@ files = [
 ]
 
 [[package]]
-name = "dmgbuild"
-version = "1.6.2"
-requires_python = ">=3.8"
-summary = "macOS command line utility to build disk images"
-groups = ["package"]
-marker = "sys_platform == \"darwin\""
-dependencies = [
-    "ds-store>=1.1.0",
-    "importlib-resources==5.9; python_version <= \"3.8\"",
-    "mac-alias>=2.0.1",
-]
-files = [
-    {file = "dmgbuild-1.6.2-py3-none-any.whl", hash = "sha256:f78200b992027ccd2aa63872ed6ed11464e9149249303b8eee477e65280993d1"},
-    {file = "dmgbuild-1.6.2.tar.gz", hash = "sha256:dba01d29f10c6804f2d72301600ddd03724daa41cd21a95409c44a3e199b19aa"},
-]
-
-[[package]]
-name = "ds-store"
-version = "1.3.1"
-requires_python = ">=3.7"
-summary = "Manipulate Finder .DS_Store files from Python"
-groups = ["package"]
-marker = "sys_platform == \"darwin\""
-dependencies = [
-    "mac-alias>=2.0.1",
-]
-files = [
-    {file = "ds_store-1.3.1-py3-none-any.whl", hash = "sha256:fbacbb0bd5193ab3e66e5a47fff63619f15e374ffbec8ae29744251a6c8f05b5"},
-    {file = "ds_store-1.3.1.tar.gz", hash = "sha256:c27d413caf13c19acb85d75da4752673f1f38267f9eb6ba81b3b5aa99c2d207c"},
-]
-
-[[package]]
-name = "filelock"
-version = "3.16.1"
-requires_python = ">=3.8"
-summary = "A platform independent file lock."
-groups = ["package"]
-marker = "sys_platform == \"linux\""
-files = [
-    {file = "filelock-3.16.1-py3-none-any.whl", hash = "sha256:2082e5703d51fbf98ea75855d9d5527e33d8ff23099bec374a134febee6946b0"},
-    {file = "filelock-3.16.1.tar.gz", hash = "sha256:c249fbfcd5db47e5e2d6d62198e565475ee65e4831e2561c8e313fa7eb961435"},
-]
-
-[[package]]
 name = "iniconfig"
 version = "2.0.0"
 requires_python = ">=3.7"
@@ -182,18 +124,6 @@ files = [
 ]
 
 [[package]]
-name = "mac-alias"
-version = "2.2.2"
-requires_python = ">=3.7"
-summary = "Generate/parse Mac OS Alias records from Python"
-groups = ["package"]
-marker = "sys_platform == \"darwin\""
-files = [
-    {file = "mac_alias-2.2.2-py3-none-any.whl", hash = "sha256:504ab8ac546f35bbd75ad014d6ad977c426660aa721f2cd3acf3dc2f664141bd"},
-    {file = "mac_alias-2.2.2.tar.gz", hash = "sha256:c99c728eb512e955c11f1a6203a0ffa8883b26549e8afe68804031aa5da856b7"},
-]
-
-[[package]]
 name = "packaging"
 version = "24.2"
 requires_python = ">=3.8"
@@ -202,22 +132,6 @@ groups = ["package", "test"]
 files = [
     {file = "packaging-24.2-py3-none-any.whl", hash = "sha256:09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759"},
     {file = "packaging-24.2.tar.gz", hash = "sha256:c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f"},
-]
-
-[[package]]
-name = "patchelf"
-version = "0.17.2.1"
-summary = "A small utility to modify the dynamic linker and RPATH of ELF executables."
-groups = ["package"]
-marker = "sys_platform == \"linux\" and (platform_machine == \"aarch64\" or platform_machine == \"armv7l\" or platform_machine == \"i686\" or platform_machine == \"ppc64le\" or platform_machine == \"s390x\" or platform_machine == \"x86_64\")"
-files = [
-    {file = "patchelf-0.17.2.1-py2.py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.musllinux_1_1_aarch64.whl", hash = "sha256:fc329da0e8f628bd836dfb8eaf523547e342351fa8f739bf2b3fe4a6db5a297c"},
-    {file = "patchelf-0.17.2.1-py2.py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.musllinux_1_1_armv7l.whl", hash = "sha256:ccb266a94edf016efe80151172c26cff8c2ec120a57a1665d257b0442784195d"},
-    {file = "patchelf-0.17.2.1-py2.py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.musllinux_1_1_ppc64le.whl", hash = "sha256:f47b5bdd6885cfb20abdd14c707d26eb6f499a7f52e911865548d4aa43385502"},
-    {file = "patchelf-0.17.2.1-py2.py3-none-manylinux_2_17_s390x.manylinux2014_s390x.musllinux_1_1_s390x.whl", hash = "sha256:a9e6ebb0874a11f7ed56d2380bfaa95f00612b23b15f896583da30c2059fcfa8"},
-    {file = "patchelf-0.17.2.1-py2.py3-none-manylinux_2_5_i686.manylinux1_i686.musllinux_1_1_i686.whl", hash = "sha256:3c8d58f0e4c1929b1c7c45ba8da5a84a8f1aa6a82a46e1cfb2e44a4d40f350e5"},
-    {file = "patchelf-0.17.2.1-py2.py3-none-manylinux_2_5_x86_64.manylinux1_x86_64.musllinux_1_1_x86_64.whl", hash = "sha256:d1a9bc0d4fd80c038523ebdc451a1cce75237cfcc52dbd1aca224578001d5927"},
-    {file = "patchelf-0.17.2.1.tar.gz", hash = "sha256:a6eb0dd452ce4127d0d5e1eb26515e39186fa609364274bc1b0b77539cfa7031"},
 ]
 
 [[package]]
@@ -316,11 +230,9 @@ summary = "pytest: simple powerful testing with Python"
 groups = ["test"]
 dependencies = [
     "colorama; sys_platform == \"win32\"",
-    "exceptiongroup>=1.0.0rc8; python_version < \"3.11\"",
     "iniconfig",
     "packaging",
     "pluggy<2,>=1.5",
-    "tomli>=1; python_version < \"3.11\"",
 ]
 files = [
     {file = "pytest-8.3.3-py3-none-any.whl", hash = "sha256:a6853c7375b2663155079443d2e45de913a911a11d669df02a50814944db57b2"},
