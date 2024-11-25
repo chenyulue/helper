@@ -3,14 +3,12 @@ from PyQt5.QtWidgets import (
 )
 import qdarktheme
 
-from helper.UI import Window
+from helper.App import App
 
 def main() -> None:
     qdarktheme.enable_hi_dpi()
-    app = QApplication([])
+    app = App([])
     qdarktheme.setup_theme("light")
-    win = Window()
-    win.show()
     app.exec_()
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@
 groups = ["default", "design", "package", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:af590b718549f11bab44be48aa576937f2581e4065c93dff21a3be55d64a647d"
+content_hash = "sha256:6204c5880ba9210ee9107bee034e6c8a6af718e0719307ddb91b419d9046f789"
 
 [[package]]
 name = "colorama"
@@ -74,6 +74,17 @@ files = [
     {file = "cx_Logging-3.2.1-cp312-cp312-win32.whl", hash = "sha256:3f3de06cf09d5986b39e930c213567c340b3237dfce03d8d3bf6099475eaa02e"},
     {file = "cx_Logging-3.2.1-cp312-cp312-win_amd64.whl", hash = "sha256:3452add0544db6ff29116b72a4c48761aaffa9b638728330433853c0c4ad2ea1"},
     {file = "cx_logging-3.2.1.tar.gz", hash = "sha256:812665ae5012680a6fe47095c3772bce638e47cf05b2c3483db3bdbe6b06da44"},
+]
+
+[[package]]
+name = "cydifflib"
+version = "1.1.0"
+requires_python = ">=3.8"
+summary = "Fast implementation of difflib's algorithms"
+groups = ["default"]
+files = [
+    {file = "cydifflib-1.1.0-cp311-cp311-win_amd64.whl", hash = "sha256:50c9c80748f92957c98fc101a5075b1cc52f6628865d54eaac0f0d9168627b18"},
+    {file = "cydifflib-1.1.0.tar.gz", hash = "sha256:9117957ed05944d51d6788580a9a0519f113532e76b4e8bfaf8ffb9eeeca2e8a"},
 ]
 
 [[package]]
