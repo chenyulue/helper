@@ -206,6 +206,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>bText</tabstop>
+  <tabstop>aText</tabstop>
+  <tabstop>cmpButton</tabstop>
+  <tabstop>clrButton</tabstop>
+  <tabstop>resultText</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc"/>
  </resources>

@@ -119,6 +119,10 @@ class Ui_cmpWidget(object):
         self.clrButton.clicked.connect(self.aText.clear) # type: ignore
         self.clrButton.clicked.connect(self.resultText.clear) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(cmpWidget)
+        cmpWidget.setTabOrder(self.bText, self.aText)
+        cmpWidget.setTabOrder(self.aText, self.cmpButton)
+        cmpWidget.setTabOrder(self.cmpButton, self.clrButton)
+        cmpWidget.setTabOrder(self.clrButton, self.resultText)
 
     def retranslateUi(self, cmpWidget):
         _translate = QtCore.QCoreApplication.translate

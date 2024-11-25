@@ -26,9 +26,10 @@ distribution = true
 [tool.pdm.scripts]
 build_resource = "pyrcc5 -o src/helper/UI/resources_rc.py src/helper/UI/resources.qrc"
 build_mainwindow = "pyuic5 -o src/helper/UI/Ui_MainWindow.py src/helper/UI/mainWindow.ui"
-build_dialog = "pyuic5 -o src/helper/UI/Ui_AboutDialog.py src/helper/UI/aboutDialog.ui"
-build_cmpwindow = "pyuic5 -o src/helper/UI/Ui_CmpWidget.py src/helper/UI/cmpWidget.ui "
-build_ui = {composite = ["build_resource", "build_mainwindow", "build_dialog", "build_cmpwindow"]}
+build_about_dialog = "pyuic5 -o src/helper/UI/Ui_AboutDialog.py src/helper/UI/aboutDialog.ui"
+build_cmpwindow = "pyuic5 -o src/helper/UI/Ui_CmpWidget.py src/helper/UI/cmpWidget.ui"
+build_search_dialog = "pyuic5 -o src/helper/UI/Ui_SearchDialog.py src/helper/UI/searchDialog.ui"
+build_ui = {composite = ["build_resource", "build_mainwindow", "build_about_dialog", "build_cmpwindow", "build_search_dialog"]}
 
 [tool.pdm.dev-dependencies]
 test = [

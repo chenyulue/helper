@@ -4,8 +4,14 @@
 [metadata]
 groups = ["default", "design", "package", "test"]
 strategy = ["inherit_metadata"]
-lock_version = "4.4.1"
-content_hash = "sha256:6204c5880ba9210ee9107bee034e6c8a6af718e0719307ddb91b419d9046f789"
+lock_version = "4.5.0"
+content_hash = "sha256:cc7b1f2dc42ac121ff815e6465b4a45216aa1e9a07a17ab93e3d07731072da78"
+
+[[metadata.targets]]
+requires_python = "==3.11.9"
+platform = "windows_amd64"
+implementation = "cpython"
+gil_disabled = false
 
 [[package]]
 name = "colorama"
@@ -13,7 +19,7 @@ version = "0.4.6"
 requires_python = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
 summary = "Cross-platform colored terminal text."
 groups = ["test"]
-marker = "sys_platform == \"win32\""
+marker = "sys_platform == \"win32\" and python_full_version == \"3.11.9\""
 files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
@@ -25,11 +31,23 @@ version = "7.2.5"
 requires_python = ">=3.8"
 summary = "Create standalone executables from Python scripts"
 groups = ["package"]
+marker = "python_full_version == \"3.11.9\""
 dependencies = [
     "cx-Logging>=3.1; sys_platform == \"win32\"",
+    "dmgbuild>=1.6.1; sys_platform == \"darwin\"",
+    "filelock>=3.12.3; sys_platform == \"linux\"",
+    "importlib-metadata>=6; python_full_version < \"3.10.2\"",
     "lief<0.16.0,>=0.12.0; sys_platform == \"win32\"",
     "packaging>=24",
+    "patchelf>=0.14; sys_platform == \"linux\" and platform_machine == \"aarch64\"",
+    "patchelf>=0.14; sys_platform == \"linux\" and platform_machine == \"armv7l\"",
+    "patchelf>=0.14; sys_platform == \"linux\" and platform_machine == \"i686\"",
+    "patchelf>=0.14; sys_platform == \"linux\" and platform_machine == \"ppc64le\"",
+    "patchelf>=0.14; sys_platform == \"linux\" and platform_machine == \"s390x\"",
+    "patchelf>=0.14; sys_platform == \"linux\" and platform_machine == \"x86_64\"",
     "setuptools<76,>=65.6.3",
+    "tomli>=2.0.1; python_version < \"3.11\"",
+    "typing-extensions>=4.10.0; python_version < \"3.10\"",
 ]
 files = [
     {file = "cx_Freeze-7.2.5-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:0f69c499b37baed9ca6fe9bb89eed73514d721ae55fe262a3b337bf9322f794c"},
@@ -63,7 +81,7 @@ version = "3.2.1"
 requires_python = ">=3.9"
 summary = "Python and C interfaces for logging"
 groups = ["package"]
-marker = "sys_platform == \"win32\""
+marker = "sys_platform == \"win32\" and python_full_version == \"3.11.9\""
 files = [
     {file = "cx_Logging-3.2.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f27755fbed447fc78f5e2aaf9aa2e75fd699ce0cd6e01649edd36eebe4db26e9"},
     {file = "cx_Logging-3.2.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1ad36493c59f452709813d8b5b34164aae7c576445e9d5758ce4dfe1ea2561ed"},
@@ -82,6 +100,7 @@ version = "1.1.0"
 requires_python = ">=3.8"
 summary = "Fast implementation of difflib's algorithms"
 groups = ["default"]
+marker = "python_full_version == \"3.11.9\""
 files = [
     {file = "cydifflib-1.1.0-cp311-cp311-win_amd64.whl", hash = "sha256:50c9c80748f92957c98fc101a5075b1cc52f6628865d54eaac0f0d9168627b18"},
     {file = "cydifflib-1.1.0.tar.gz", hash = "sha256:9117957ed05944d51d6788580a9a0519f113532e76b4e8bfaf8ffb9eeeca2e8a"},
@@ -92,6 +111,7 @@ name = "darkdetect"
 version = "0.7.1"
 summary = "Detect OS Dark Mode from Python"
 groups = ["default"]
+marker = "python_full_version == \"3.11.9\""
 files = [
     {file = "darkdetect-0.7.1-py2.py3-none-any.whl", hash = "sha256:3efe69f8ecd5f1b7f4fbb0d1d93f656b0e493c45cc49222380ffe2a529cbc866"},
     {file = "darkdetect-0.7.1.tar.gz", hash = "sha256:47be3cf5134432ddb616bbffc927237718407914993c82809983e7ccebf49013"},
@@ -103,6 +123,7 @@ version = "2.0.0"
 requires_python = ">=3.7"
 summary = "brain-dead simple config-ini parsing"
 groups = ["test"]
+marker = "python_full_version == \"3.11.9\""
 files = [
     {file = "iniconfig-2.0.0-py3-none-any.whl", hash = "sha256:b6a85871a79d2e3b22d2d1b94ac2824226a63c6b741c88f7ae975f18b6778374"},
     {file = "iniconfig-2.0.0.tar.gz", hash = "sha256:2d91e135bf72d31a410b17c16da610a82cb55f6b0477d1a902134b24a455b8b3"},
@@ -114,7 +135,7 @@ version = "0.15.1"
 requires_python = ">=3.8"
 summary = "Library to instrument executable formats"
 groups = ["package"]
-marker = "sys_platform == \"win32\""
+marker = "sys_platform == \"win32\" and python_full_version == \"3.11.9\""
 files = [
     {file = "lief-0.15.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:20508c52de0dffcee3242253541609590167a3e56150cbacb506fdbb822206ef"},
     {file = "lief-0.15.1-cp311-cp311-macosx_11_0_x86_64.whl", hash = "sha256:0750c892fd3b7161a3c2279f25fe1844427610c3a5a4ae23f65674ced6f93ea5"},
@@ -140,6 +161,7 @@ version = "24.2"
 requires_python = ">=3.8"
 summary = "Core utilities for Python packages"
 groups = ["package", "test"]
+marker = "python_full_version == \"3.11.9\""
 files = [
     {file = "packaging-24.2-py3-none-any.whl", hash = "sha256:09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759"},
     {file = "packaging-24.2.tar.gz", hash = "sha256:c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f"},
@@ -151,6 +173,7 @@ version = "1.5.0"
 requires_python = ">=3.8"
 summary = "plugin and hook calling mechanisms for python"
 groups = ["test"]
+marker = "python_full_version == \"3.11.9\""
 files = [
     {file = "pluggy-1.5.0-py3-none-any.whl", hash = "sha256:44e1ad92c8ca002de6377e165f3e0f1be63266ab4d554740532335b9d75ea669"},
     {file = "pluggy-1.5.0.tar.gz", hash = "sha256:2cffa88e94fdc978c4c574f15f9e59b7f4201d439195c3715ca9e2486f1d0cf1"},
@@ -162,6 +185,7 @@ version = "5.15.11"
 requires_python = ">=3.8"
 summary = "Python bindings for the Qt cross platform application toolkit"
 groups = ["default", "design"]
+marker = "python_full_version == \"3.11.9\""
 dependencies = [
     "PyQt5-Qt5<5.16.0,>=5.15.2",
     "PyQt5-sip<13,>=12.15",
@@ -180,6 +204,7 @@ name = "pyqt5-qt5"
 version = "5.15.2"
 summary = "The subset of a Qt installation needed by PyQt5."
 groups = ["default", "design"]
+marker = "python_full_version == \"3.11.9\""
 files = [
     {file = "PyQt5_Qt5-5.15.2-py3-none-macosx_10_13_intel.whl", hash = "sha256:76980cd3d7ae87e3c7a33bfebfaee84448fd650bad6840471d6cae199b56e154"},
     {file = "PyQt5_Qt5-5.15.2-py3-none-manylinux2014_x86_64.whl", hash = "sha256:1988f364ec8caf87a6ee5d5a3a5210d57539988bf8e84714c7d60972692e2f4a"},
@@ -193,6 +218,7 @@ version = "0.0.14"
 requires_python = ">=3.8"
 summary = ""
 groups = ["design"]
+marker = "python_full_version == \"3.11.9\""
 dependencies = [
     "pyqt5",
 ]
@@ -207,6 +233,7 @@ version = "12.15.0"
 requires_python = ">=3.8"
 summary = "The sip module support for PyQt5"
 groups = ["default", "design"]
+marker = "python_full_version == \"3.11.9\""
 files = [
     {file = "PyQt5_sip-12.15.0-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:855563d4d3b59ce7438bbf2dd32fed2707787defa40f3efe94f204a19ef92b25"},
     {file = "PyQt5_sip-12.15.0-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:0b718a362f4392430903bbb2a4b9bbff9841a16a52f0cfdd5b5bbd9d11457980"},
@@ -225,6 +252,7 @@ version = "2.3.2"
 requires_python = ">=3.8,<3.13"
 summary = "Flat dark theme for PySide and PyQt."
 groups = ["default"]
+marker = "python_full_version == \"3.11.9\""
 dependencies = [
     "darkdetect<0.8.0,>=0.7.1",
 ]
@@ -239,11 +267,14 @@ version = "8.3.3"
 requires_python = ">=3.8"
 summary = "pytest: simple powerful testing with Python"
 groups = ["test"]
+marker = "python_full_version == \"3.11.9\""
 dependencies = [
     "colorama; sys_platform == \"win32\"",
+    "exceptiongroup>=1.0.0rc8; python_version < \"3.11\"",
     "iniconfig",
     "packaging",
     "pluggy<2,>=1.5",
+    "tomli>=1; python_version < \"3.11\"",
 ]
 files = [
     {file = "pytest-8.3.3-py3-none-any.whl", hash = "sha256:a6853c7375b2663155079443d2e45de913a911a11d669df02a50814944db57b2"},
@@ -256,6 +287,7 @@ version = "75.6.0"
 requires_python = ">=3.9"
 summary = "Easily download, build, install, upgrade, and uninstall Python packages"
 groups = ["package"]
+marker = "python_full_version == \"3.11.9\""
 files = [
     {file = "setuptools-75.6.0-py3-none-any.whl", hash = "sha256:ce74b49e8f7110f9bf04883b730f4765b774ef3ef28f722cce7c273d253aaf7d"},
     {file = "setuptools-75.6.0.tar.gz", hash = "sha256:8199222558df7c86216af4f84c30e9b34a61d8ba19366cc914424cdbd28252f6"},
