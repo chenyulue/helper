@@ -25,11 +25,31 @@ distribution = true
 
 [tool.pdm.scripts]
 build_resource = "pyrcc5 -o src/helper/UI/resources_rc.py src/helper/UI/resources.qrc"
-build_mainwindow = "pyuic5 -o src/helper/UI/Ui_MainWindow.py src/helper/UI/mainWindow.ui"
-build_about_dialog = "pyuic5 -o src/helper/UI/Ui_AboutDialog.py src/helper/UI/aboutDialog.ui"
-build_cmpwindow = "pyuic5 -o src/helper/UI/Ui_CmpWidget.py src/helper/UI/cmpWidget.ui"
-build_search_dialog = "pyuic5 -o src/helper/UI/Ui_SearchDialog.py src/helper/UI/searchDialog.ui"
-build_ui = {composite = ["build_resource", "build_mainwindow", "build_about_dialog", "build_cmpwindow", "build_search_dialog"]}
+
+build_mainwindow = {composite = [
+    "pyuic5 -o src/helper/UI/Ui_MainWindow.py src/helper/UI/mainWindow.ui",
+    "trans_import.py src/helper/UI/Ui_MainWindow.py"
+]}
+build_about_dialog = {composite = [
+    "pyuic5 -o src/helper/UI/Ui_AboutDialog.py src/helper/UI/aboutDialog.ui",
+    "trans_import.py src/helper/UI/Ui_AboutDialog.py"
+]}
+build_cmpwindow = {composite = [
+    "pyuic5 -o src/helper/UI/Ui_CmpWidget.py src/helper/UI/cmpWidget.ui",
+    "trans_import.py src/helper/UI/Ui_CmpWidget.py"
+]}
+build_search_dialog = {composite = [
+    "pyuic5 -o src/helper/UI/Ui_SearchDialog.py src/helper/UI/searchDialog.ui",
+    "trans_import.py src/helper/UI/Ui_SearchDialog.py"
+]}
+
+build_ui = {composite = [
+    "build_resource", 
+    "build_mainwindow", 
+    "build_about_dialog", 
+    "build_cmpwindow", 
+    "build_search_dialog",
+    ]}
 
 [tool.pdm.dev-dependencies]
 test = [

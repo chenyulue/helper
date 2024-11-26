@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_aboutDialog(object):
     def setupUi(self, aboutDialog):
         aboutDialog.setObjectName("aboutDialog")
-        aboutDialog.resize(359, 363)
+        aboutDialog.resize(335, 344)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -35,7 +35,7 @@ class Ui_aboutDialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy)
-        self.label.setMaximumSize(QtCore.QSize(100, 100))
+        self.label.setMaximumSize(QtCore.QSize(80, 80))
         self.label.setText("")
         self.label.setPixmap(QtGui.QPixmap(":/icons/app_blue.ico"))
         self.label.setScaledContents(True)
@@ -68,6 +68,6 @@ class Ui_aboutDialog(object):
 
     def retranslateUi(self, aboutDialog):
         _translate = QtCore.QCoreApplication.translate
-        aboutDialog.setWindowTitle(_translate("aboutDialog", "Dialog"))
-        self.label_2.setText(_translate("aboutDialog", "<html><head/><body><p style=\"line-height:0.5\"><span style=\" font-size:10pt; font-weight:600;\">关于专利审查助手helper</span></p><p style=\"line-height:0.5\"><span style=\" font-weight:600;\">版本信息</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">- 当前版本：0.1.0</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">- 更新日期：2024年11月23日</span></p><p style=\"line-height:0.5\"><span style=\" font-weight:600;\">版权信息</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">© 2024 卢振宇，保留所有权利 </span></p><p style=\"line-height:0.5\"><span style=\" font-weight:600;\">许可证信息</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">MIT许可证，<a href=\"https://mit-license.org/\">https://mit-license.org/</a></span></p><p style=\"line-height:0.5\"><span style=\" font-weight:600;\">第三方库和工具</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">我们的应用程序使用以下第三方库和工具： </span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">1. Python - 一款流行的脚本程序</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">2. PyQt5 - Qt5 GUI框架的Python绑定库</span></p><p style=\"line-height:0.5\"><span style=\" font-size:9pt; font-weight:600;\">反馈途径</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">如果您遇到问题或发现Bug，请联系：</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">- 电子邮件：luzhenyu@cnipa.gov.cn</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">- 电话：0512-88995893</span></p><p style=\"line-height:0.5\"></p></body></html>"))
+        aboutDialog.setWindowTitle(_translate("aboutDialog", "关于Helper"))
+        self.label_2.setText(_translate("aboutDialog", "<html><head/><body><p style=\"line-height:0.5\"><span style=\" font-size:10pt; font-weight:600;\">专利审查助手Helper</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">&nbsp;Copyright © 2024 by Zhenyu Lu </span></p><p style=\"line-height:0.5\"><span style=\" font-weight:600;\">版本信息</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">- 当前版本：0.1.0</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">- 更新日期：2024年11月23日</span></p><p style=\"line-height:0.5\"><span style=\" font-weight:600;\">许可证信息</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">MIT许可证，<a href=\"https://mit-license.org/\">https://mit-license.org/</a></span></p><p style=\"line-height:0.5\"><span style=\" font-weight:600;\">第三方库和工具</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">我们的应用程序使用以下第三方库和工具： </span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">1. Python - 一款流行的脚本程序</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">2. PyQt5 - Qt5 GUI框架的Python绑定库</span></p><p style=\"line-height:0.5\"><span style=\" font-size:9pt; font-weight:600;\">反馈途径</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">如果您遇到问题或发现Bug，请联系：</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">- 电子邮件：luzhenyu@cnipa.gov.cn</span></p><p style=\"line-height:0.5\"><span style=\" font-size:8pt;\">- 电话：0512-88995893</span></p><p style=\"line-height:0.5\"></p></body></html>"))
 from . import resources_rc

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>359</width>
-    <height>363</height>
+    <width>335</width>
+    <height>344</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>关于Helper</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
@@ -42,8 +42,8 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>100</width>
-         <height>100</height>
+         <width>80</width>
+         <height>80</height>
         </size>
        </property>
        <property name="text">
@@ -66,7 +66,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;关于专利审查助手helper&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;版本信息&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;- 当前版本：0.1.0&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;- 更新日期：2024年11月23日&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;版权信息&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;© 2024 卢振宇，保留所有权利 &lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;许可证信息&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;MIT许可证，&lt;a href=&quot;https://mit-license.org/&quot;&gt;https://mit-license.org/&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;第三方库和工具&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;我们的应用程序使用以下第三方库和工具： &lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;1. Python - 一款流行的脚本程序&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;2. PyQt5 - Qt5 GUI框架的Python绑定库&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;反馈途径&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;如果您遇到问题或发现Bug，请联系：&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;- 电子邮件：luzhenyu@cnipa.gov.cn&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;- 电话：0512-88995893&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;专利审查助手Helper&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;&amp;nbsp;Copyright © 2024 by Zhenyu Lu &lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;版本信息&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;- 当前版本：0.1.0&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;- 更新日期：2024年11月23日&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;许可证信息&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;MIT许可证，&lt;a href=&quot;https://mit-license.org/&quot;&gt;https://mit-license.org/&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;第三方库和工具&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;我们的应用程序使用以下第三方库和工具： &lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;1. Python - 一款流行的脚本程序&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;2. PyQt5 - Qt5 GUI框架的Python绑定库&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;反馈途径&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;如果您遇到问题或发现Bug，请联系：&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;- 电子邮件：luzhenyu@cnipa.gov.cn&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;- 电话：0512-88995893&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;line-height:0.5&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>

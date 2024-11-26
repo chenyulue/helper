@@ -71,7 +71,7 @@ class Ui_searchDialog(object):
 
     def retranslateUi(self, searchDialog):
         _translate = QtCore.QCoreApplication.translate
-        searchDialog.setWindowTitle(_translate("searchDialog", "Dialog"))
+        searchDialog.setWindowTitle(_translate("searchDialog", "查找"))
         self.label.setText(_translate("searchDialog", "查找："))
         self.preButton.setText(_translate("searchDialog", "查找上一个(P)"))
         self.preButton.setShortcut(_translate("searchDialog", "P"))

@@ -6,6 +6,11 @@ from PyQt5.QtWidgets import (
     QWidget,
     QTextEdit,
     QTextBrowser,
+    QCheckBox,
+    QLabel,
+    QSpinBox,
+    QPushButton,
+    QSizePolicy,
 )
 from PyQt5.QtGui import (
     QTextCursor,
@@ -42,7 +47,35 @@ class Window(QMainWindow, Ui_mainWindow):
         self.searchDialog = SearchDialog(self)
         self.cmpWidget = CmpWidget()
 
+        self._add_widgets_for_toolbar()
+
         self._connectSignalsAndSlots()
+
+    def _add_widgets_for_toolbar(self) -> None:
+        self.segmentCheckBox = QCheckBox("分词模式", parent=self.widgetToolBar)
+        label = QLabel("最短截词长度:", parent=self.widgetToolBar)
+        self.lengthSpinBox = QSpinBox(parent=self.widgetToolBar)
+        self.checkButton = QPushButton("检查", parent=self.widgetToolBar)
+        self.removeButton = QPushButton("清空", parent=self.widgetToolBar)
+
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.widgetToolBar.addWidget(spacer)
+        
+        self.widgetToolBar.addWidget(self.segmentCheckBox)
+
+        self.widgetToolBar.addSeparator()
+        
+        self.widgetToolBar.addWidget(label)
+        self.widgetToolBar.addWidget(self.lengthSpinBox)
+        
+        self.widgetToolBar.addSeparator()
+
+        spacer1 = QWidget()
+        spacer1.setFixedSize(10, 10)
+        self.widgetToolBar.addWidget(self.checkButton)
+        self.widgetToolBar.addWidget(spacer1)
+        self.widgetToolBar.addWidget(self.removeButton)
 
     def _connectSignalsAndSlots(self):
         self.aboutAction.triggered.connect(self._showAboutDialog)
