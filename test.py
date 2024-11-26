@@ -1,48 +1,57 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTextBrowser, QVBoxLayout, QWidget
-from PyQt5.QtGui import QTextCursor, QTextCharFormat, QColor
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QCheckBox
+from PyQt5.QtCore import Qt
 
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.text_browser = QTextBrowser()
-        layout = QVBoxLayout()
-        container = QWidget()
-        container.setLayout(layout)
-        layout.addWidget(self.text_browser)
-        self.setCentralWidget(container)
+class ToggleCheckBox(QCheckBox):
+    def __init__(self, parent=None):
+        super(ToggleCheckBox, self).__init__(parent)
+        self.setFixedSize(60, 28)
+        self.setStyleSheet("""
+            /* Hide the default checkbox indicator */
+            QCheckBox::indicator {
+                width: 60px;
+                height: 28px;
+                border-radius: 14px;
+                background-color: #ccc;
+                position: absolute;
+                left: 0;
+                top: 0;
+                transition: all 0.3s ease-in-out;
+            }
 
-        # 示例文本
-        self.text_browser.setText("这是一个示例文本，我们将对其进行格式化。\n"
-                                 "这里是一些更多文本，用于演示不同的格式选项。""这是一个示例文本，我们将对其进行格式化。\n"
-                                 "这里是一些更多文本，用于演示不同的格式选项。")
+            /* Change background color when checked */
+            QCheckBox::indicator:checked {
+                background-color: #76c7c0;
+            }
 
-        # 应用格式化
-        self.apply_format(10, 20, 'color', QColor('red'))
-        self.apply_format(10, 20, 'underline')
-        self.apply_format(30, 40, 'underline')
-        self.apply_format(50, 60, 'strikethrough')
+            /* Create a custom slider */
+            QCheckBox::indicator:after {
+                content: '';
+                width: 24px;
+                height: 24px;
+                border-radius: 12px;
+                background-color: white;
+                position: absolute;
+                top: 2px;
+                left: 2px; /* Initial position */
+                transition: left 0.3s ease-in-out;
+            }
 
-    def apply_format(self, start_pos, end_pos, format_type, color=None):
-        document = self.text_browser.document()
-        cursor = QTextCursor(document)
-        cursor.setPosition(start_pos)
-        cursor.setPosition(end_pos, QTextCursor.KeepAnchor)
+            /* Move the slider to the right when checked */
+            QCheckBox::indicator:checked:after {
+                left: 34px; /* Final position */
+            }
+        """)
 
-        char_format = QTextCharFormat()
-
-        if format_type == 'color':
-            if color:
-                char_format.setForeground(color)
-        elif format_type == 'underline':
-            char_format.setUnderlineStyle(QTextCharFormat.SingleUnderline)
-        elif format_type == 'strikethrough':
-            char_format.setFontStrikeOut(True)
-
-        cursor.mergeCharFormat(char_format)
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = QApplication([])
-    window = MainWindow()
+    window = QWidget()
+    layout = QVBoxLayout()
+
+    toggle_checkbox = ToggleCheckBox()
+    toggle_checkbox.clicked.connect(lambda checked: print(f"Toggle is {'on' if checked else 'off'}"))
+    layout.addWidget(toggle_checkbox)
+
+    window.setLayout(layout)
     window.show()
     app.exec_()
 

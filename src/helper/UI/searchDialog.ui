@@ -71,6 +71,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="preButton">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
        <property name="focusPolicy">
         <enum>Qt::ClickFocus</enum>
        </property>
@@ -84,6 +90,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="nextButton">
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
        <property name="focusPolicy">
         <enum>Qt::ClickFocus</enum>
        </property>
@@ -135,7 +147,7 @@
      <item row="1" column="2">
       <widget class="QPushButton" name="pushButton_3">
        <property name="focusPolicy">
-        <enum>Qt::ClickFocus</enum>
+        <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
         <string>取消(C)</string>

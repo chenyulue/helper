@@ -48,6 +48,12 @@
       <layout class="QGridLayout" name="gridLayout" rowstretch="0,2" columnstretch="1,0,1">
        <item row="0" column="0">
         <widget class="QLabel" name="bLabel">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>修改文本 (请输入或Ctrl+V粘贴文本):</string>
          </property>
@@ -55,6 +61,12 @@
        </item>
        <item row="0" column="2">
         <widget class="QLabel" name="aLabel">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>原始文本 (请输入或Ctrl+V粘贴文本):</string>
          </property>
@@ -102,6 +114,12 @@
              <height>0</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
            <property name="text">
             <string>比  较</string>
            </property>
@@ -125,6 +143,12 @@
          </item>
          <item>
           <widget class="QPushButton" name="clrButton">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
            <property name="text">
             <string>清  空</string>
            </property>
@@ -178,6 +202,12 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="text">
           <string>修改对照:</string>

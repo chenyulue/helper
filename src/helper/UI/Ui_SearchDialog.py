@@ -60,7 +60,7 @@ class Ui_searchDialog(object):
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem1, 1, 1, 1, 1)
         self.pushButton_3 = QtWidgets.QPushButton(searchDialog)
-        self.pushButton_3.setFocusPolicy(QtCore.Qt.ClickFocus)
+        self.pushButton_3.setFocusPolicy(QtCore.Qt.NoFocus)
         self.pushButton_3.setObjectName("pushButton_3")
         self.gridLayout.addWidget(self.pushButton_3, 1, 2, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout)

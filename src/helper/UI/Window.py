@@ -58,6 +58,9 @@ class Window(QMainWindow, Ui_mainWindow):
         self.checkButton = QPushButton("检查", parent=self.widgetToolBar)
         self.removeButton = QPushButton("清空", parent=self.widgetToolBar)
 
+        self.checkButton.setStyleSheet("font-weight: bold;")
+        self.removeButton.setStyleSheet("font-weight: bold;")
+
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.widgetToolBar.addWidget(spacer)
