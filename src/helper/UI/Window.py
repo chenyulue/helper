@@ -297,7 +297,7 @@ class AboutDialog(QDialog, Ui_aboutDialog):
         # loadUi(UI_PATH / "aboutDialog.ui", self)
         self.setupUi(self)
 
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint) # type: ignore
 
 
 class SearchDialog(QDialog, Ui_searchDialog):
@@ -305,4 +305,4 @@ class SearchDialog(QDialog, Ui_searchDialog):
         super().__init__(parent)
         self.setupUi(self)
 
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint) # type: ignore
