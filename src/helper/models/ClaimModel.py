@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import re
+import itertools
 
 SPLIT_CLAIM = r"^(\d+)\.\s*([^，]+)，.+?(?:\n|$)(?:^[^\d].+?(?:\n|$))*"
 TITLE = r"(?:根据|如)权利(?:要求)?(.+?)所述的?(.+)"
@@ -71,3 +72,53 @@ class ClaimModel:
             return list(range(int(match.group(1)), int(match.group(2)) + 1)), match.group(3) is not None
         else:
             raise ValueError(f"权利要求引用撰写方式:`{deps}`未被处理, 请反馈Bug")
+
+    def _reference_has_basis(self, claim: Claim, terminology: str, pos: int, claims_refs: dict[int, list[int]]) -> bool | list[int]:
+        pattern = re.compile(terminology)
+        
+        # 检查当前权利要求中在该技术术语之前的文本中是否定义了该术语
+        if pattern.search(claim.content, 0, pos):
+            return True
+        # 检查其引用的权利要求中是否定义了该术语
+        else:
+            return self._terminology_exists(pattern, claim.number, claims_refs)
+
+    def _terminology_exists(self, pattern: re.Pattern, claim_number: int, claims_refs: dict[int, list[int]]) -> bool | list[int]:
+        ref_paths = self._get_reference_path(claim_number, claims_refs)
+
+        existed_refs = []
+        for ref_number in self._flatten_paths(ref_paths)[1:]:
+            ref_claim = self.claims[ref_number - 1]
+            if pattern.search(ref_claim.content):
+                existed_ref = ref_number
+
+                # 如果所有的引用路径上都存在该术语，则直接返回True
+                if all(existed_ref in paths for paths in ref_paths):
+                    return True
+                # 收集存在该术语的部分引用路径
+                else:
+                    existed_refs.append(existed_ref)
+
+        # 若existed_refs为空列表，则表明所有引用路径都不存在该技术术语
+        return existed_refs if existed_refs else False
+
+    def _get_reference_path(self, claim_number: int, claims_refs: dict[int, list[int]]) -> list[list[int]]:
+        # 如果该权利要求没有引用其他权利要求（即为独立权利要求），直接返回编号
+        if not claims_refs.get(claim_number):
+            return [[claim_number]]
+
+        # 否则，递归获取引用的权利要求的路径
+        paths = []
+        for referenced_claim in claims_refs[claim_number]:
+            # 递归获取被引用的权利要求的路径
+            sub_paths = self._get_reference_path(referenced_claim, claims_refs)
+
+            # 将当前权利要求加入到每个路径的前面
+            for path in sub_paths:
+                paths.append([claim_number] + path)
+
+        return paths
+
+    def _flatten_paths(self, paths: list[list[int]]) -> list[int]:
+        return sorted(set(itertools.chain(*paths)), reverse=True)
+            
