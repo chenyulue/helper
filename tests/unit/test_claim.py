@@ -1,6 +1,6 @@
 import re
 import pytest
-from helper.models import ClaimModel
+from helper.models import ClaimModel, Claim
 
 
 def test_claim_model(claims1):
@@ -61,14 +61,15 @@ def test_get_reference_path():
         7: [4, 5],  # 权利要求7同时引用权利要求4和权利要求5
         8: [7],  # 权利要求8引用权利要求7
     }
-    assert claim_model._get_reference_path(1, claims_references) == [[1]]
-    assert claim_model._get_reference_path(2, claims_references) == [[2, 1]]
-    assert claim_model._get_reference_path(3, claims_references) == [[3, 1]]
-    assert claim_model._get_reference_path(4, claims_references) == [[4, 2, 1], [4, 3, 1]]
-    assert claim_model._get_reference_path(5, claims_references) == [[5, 4, 2, 1], [5, 4, 3, 1]]
-    assert claim_model._get_reference_path(6, claims_references) == [[6, 2, 1]]
-    assert claim_model._get_reference_path(7, claims_references) == [[7, 4, 2, 1], [7, 4, 3, 1], [7, 5, 4, 2, 1], [7, 5, 4, 3, 1]]
-    assert claim_model._get_reference_path(8, claims_references) == [[8, 7, 4, 2, 1], [8, 7, 4, 3, 1], [8, 7, 5, 4, 2, 1], [8, 7, 5, 4, 3, 1]]
+    claims = tuple([Claim(i, j, False, False, "", f"{i}+{j}", 0) for i, j in claims_references.items()])
+    assert claim_model._get_reference_path(1, claims) == [[1]]
+    assert claim_model._get_reference_path(2, claims) == [[2, 1]]
+    assert claim_model._get_reference_path(3, claims) == [[3, 1]]
+    assert claim_model._get_reference_path(4, claims) == [[4, 2, 1], [4, 3, 1]]
+    assert claim_model._get_reference_path(5, claims) == [[5, 4, 2, 1], [5, 4, 3, 1]]
+    assert claim_model._get_reference_path(6, claims) == [[6, 2, 1]]
+    assert claim_model._get_reference_path(7, claims) == [[7, 4, 2, 1], [7, 4, 3, 1], [7, 5, 4, 2, 1], [7, 5, 4, 3, 1]]
+    assert claim_model._get_reference_path(8, claims) == [[8, 7, 4, 2, 1], [8, 7, 4, 3, 1], [8, 7, 5, 4, 2, 1], [8, 7, 5, 4, 3, 1]]
 
 def test_flattern_path():
     claim_model = ClaimModel("")
@@ -88,10 +89,17 @@ def test_flattern_path():
 ], indirect=["claims1"])
 def test_reference_has_basis(claims1, number, term, expected):
     claim_model = ClaimModel(claims1)
-    claims_refs = {claim.number: claim.dependency for claim in claim_model.claims}
     match = re.search(f"所述({term})", claim_model.claims[number - 1].content)
     if match:
         start_pos = match.start()
-        assert claim_model._reference_has_basis(claim_model.claims[number - 1], term, start_pos, claims_refs) == expected
+        assert claim_model._reference_has_basis(claim_model.claims[number - 1], term, start_pos, claim_model.claims) == expected
+
+def test_get_terminology(claims1):
+    claim_model = ClaimModel(claims1)
+    result = claim_model._get_terminology(claim_model.claims[11], 3)
+    assert result == {"电流引": 32, "外延层": 49, "场效应": 16}
+
+    result = claim_model._get_terminology(claim_model.claims[11], 5)
+    assert result == {"电流引导层": 32, "外延层": 49, "场效应晶体": 16}
     
     
