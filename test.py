@@ -1,5 +1,6 @@
 import timeit
 from helper.models import ClaimModel
+from pprint import pprint
 
 with open("./tests/claims_set/claims1.txt", "r", encoding="utf-8") as f:
     content = f.read()
@@ -12,7 +13,9 @@ result = claim_model._get_reference_path(12, claim_model.claims)
 
 end_time = timeit.time.perf_counter()
 
-print("权利要求11的引用路径 -> ", result)
-print("花费时间 ->", end_time - start_time, "seconds")
+claim_model.check_all_reference_basis(3)
+claim_model.check_all_reference_basis(5)
+
+pprint(claim_model.reference_basis)
 
     

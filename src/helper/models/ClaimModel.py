@@ -24,6 +24,13 @@ class Claim:
     def __hash__(self):
         return hash(self.content)
 
+@dataclass
+class RefBasis:
+    position: int
+    term: str
+    hasbasis_confirmed: bool | None
+    hasbasis_checked: bool | list[int]
+
 
 class ClaimModel:
     def __init__(self, claims: str):
@@ -93,12 +100,24 @@ class ClaimModel:
         else:
             raise ValueError(f"权利要求引用撰写方式:`{deps}`未被处理, 请反馈Bug")
 
-    def _check_reference_basis(self, claim: Claim, length: int):
-        # todo: 
-        result = {}
-        for term, start_pos in self._get_terminology(claim, length).items():
-            result = self._reference_has_basis(claim, term, start_pos, self.claims)
-            pass
+    def check_all_reference_basis(self, length: int) -> None:
+        for claim in self.claims:
+            self._check_reference_basis(claim, length)
+
+    def _check_reference_basis(self, claim: Claim, length: int) -> None:
+        for term, position in self._get_terminology(claim, length).items():
+            pos = claim.start_pos + position
+            if self.reference_basis.get(claim.number) is None:
+                result = self._reference_has_basis(claim, term, pos, self.claims)
+                self.reference_basis[claim.number] = {
+                    pos: RefBasis(pos, term, None, result)
+                }
+            elif self.reference_basis[claim.number].get(pos) is None:
+                result = self._reference_has_basis(claim, term, pos, self.claims)
+                self.reference_basis[claim.number].update({pos: RefBasis(pos, term, None, result)})
+            elif self.reference_basis[claim.number].get(pos).hasbasis_confirmed is None:
+                result = self._reference_has_basis(claim, term, pos, self.claims)
+                self.reference_basis[claim.number].update({pos: RefBasis(pos, term, None, result)})
     
     def _get_terminology(self, claim: Claim, length: int) -> dict[str, int]:
         PATTERN = "(?:所述的|所述|该)([^，。；,;]{1," f"{length}" "})"
