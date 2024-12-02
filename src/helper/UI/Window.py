@@ -22,7 +22,7 @@ from PyQt5.QtGui import (
 from PyQt5.QtCore import Qt
 # from PyQt5.uic import loadUi
 
-from ..models import OpCode
+from ..models import OpCode, RefBasis
 
 from . import resources_rc  # noqa: F401
 from .Ui_MainWindow import Ui_mainWindow
@@ -51,6 +51,17 @@ class Window(QMainWindow, Ui_mainWindow):
 
         self._connectSignalsAndSlots()
 
+    def display_reference_basis(self, ref_basis: dict[int, dict[int, RefBasis]]):
+        # TODO:
+        self.resultText.clear()
+        
+        for claim_number, bases in ref_basis.items():
+            for position, basis in bases.items():
+                if basis.hasbasis_confirmed is False:
+                    self.resultText.append(f"{claim_number}-{basis.position} {basis.term} confirmed")
+                elif basis.hasbasis_confirmed is None and basis.hasbasis_checked is False:
+                    self.resultText.append(f"{claim_number}-{basis.position} {basis.term} not confirmed")
+
     def _add_widgets_for_toolbar(self) -> None:
         self.segmentCheckBox = QCheckBox("分词模式", parent=self.widgetToolBar)
         label = QLabel("最短截词长度:", parent=self.widgetToolBar)
@@ -60,6 +71,9 @@ class Window(QMainWindow, Ui_mainWindow):
 
         self.checkButton.setStyleSheet("font-weight: bold;")
         self.removeButton.setStyleSheet("font-weight: bold;")
+
+        self.lengthSpinBox.setRange(1, 20)
+        self.lengthSpinBox.lineEdit().setReadOnly(True) # type: ignore
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)

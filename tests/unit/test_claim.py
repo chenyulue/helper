@@ -101,5 +101,8 @@ def test_get_terminology(claims1):
 
     result = claim_model._get_terminology(claim_model.claims[11], 5)
     assert result == {"电流引导层": 32, "外延层": 49, "场效应晶体": 16}
+
+    result = claim_model._get_terminology(claim_model.claims[7], 3)
+    assert result["纳米线"] == 43
     
     

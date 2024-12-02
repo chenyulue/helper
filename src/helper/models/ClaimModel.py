@@ -24,6 +24,7 @@ class Claim:
     def __hash__(self):
         return hash(self.content)
 
+
 @dataclass
 class RefBasis:
     position: int
@@ -38,6 +39,18 @@ class ClaimModel:
 
         self.claims = self._parse_claims()
 
+        self.reference_basis = {}
+
+    def reset_model(self, new_claims: str) -> None:
+        """根据新的权利要求文本重置ClaimModel：重新解析权利要求，并将引用基础赋值空列表
+
+        Parameters
+        ----------
+        new_claims : str
+            新的权利要求文本
+        """
+        self._claims = new_claims
+        self.claims = self._parse_claims()
         self.reference_basis = {}
 
     def _parse_claims(self) -> tuple[Claim, ...]:
@@ -101,6 +114,13 @@ class ClaimModel:
             raise ValueError(f"权利要求引用撰写方式:`{deps}`未被处理, 请反馈Bug")
 
     def check_all_reference_basis(self, length: int) -> None:
+        """该函数根据特定的截词长度，检查权利要求书中所有缺乏引用基础的缺陷
+
+        Parameters
+        ----------
+        length : int
+            技术术语的截词长度
+        """
         for claim in self.claims:
             self._check_reference_basis(claim, length)
 
@@ -108,17 +128,21 @@ class ClaimModel:
         for term, position in self._get_terminology(claim, length).items():
             pos = claim.start_pos + position
             if self.reference_basis.get(claim.number) is None:
-                result = self._reference_has_basis(claim, term, pos, self.claims)
+                result = self._reference_has_basis(claim, term, position, self.claims)
                 self.reference_basis[claim.number] = {
                     pos: RefBasis(pos, term, None, result)
                 }
             elif self.reference_basis[claim.number].get(pos) is None:
-                result = self._reference_has_basis(claim, term, pos, self.claims)
-                self.reference_basis[claim.number].update({pos: RefBasis(pos, term, None, result)})
+                result = self._reference_has_basis(claim, term, position, self.claims)
+                self.reference_basis[claim.number].update(
+                    {pos: RefBasis(pos, term, None, result)}
+                )
             elif self.reference_basis[claim.number].get(pos).hasbasis_confirmed is None:
-                result = self._reference_has_basis(claim, term, pos, self.claims)
-                self.reference_basis[claim.number].update({pos: RefBasis(pos, term, None, result)})
-    
+                result = self._reference_has_basis(claim, term, position, self.claims)
+                self.reference_basis[claim.number].update(
+                    {pos: RefBasis(pos, term, None, result)}
+                )
+
     def _get_terminology(self, claim: Claim, length: int) -> dict[str, int]:
         PATTERN = "(?:所述的|所述|该)([^，。；,;]{1," f"{length}" "})"
         pattern = re.compile(PATTERN)
