@@ -29,6 +29,7 @@ class Claim:
 class RefBasis:
     position: int
     term: str
+    context: str
     hasbasis_confirmed: bool | None
     hasbasis_checked: bool | list[int]
 
@@ -40,6 +41,7 @@ class ClaimModel:
         self.claims = self._parse_claims()
 
         self.reference_basis = {}
+        self.reference_path = {}
 
     def reset_model(self, new_claims: str) -> None:
         """根据新的权利要求文本重置ClaimModel：重新解析权利要求，并将引用基础赋值空列表
@@ -52,6 +54,7 @@ class ClaimModel:
         self._claims = new_claims
         self.claims = self._parse_claims()
         self.reference_basis = {}
+        self.reference_path = {}
 
     def _parse_claims(self) -> tuple[Claim, ...]:
         claims = []
@@ -126,30 +129,38 @@ class ClaimModel:
 
     def _check_reference_basis(self, claim: Claim, length: int) -> None:
         for term, position in self._get_terminology(claim, length).items():
-            pos = claim.start_pos + position
+            pos = claim.start_pos + position[0]
             if self.reference_basis.get(claim.number) is None:
-                result = self._reference_has_basis(claim, term, position, self.claims)
+                result = self._reference_has_basis(claim, term, position[0], self.claims)
                 self.reference_basis[claim.number] = {
-                    pos: RefBasis(pos, term, None, result)
+                    pos: RefBasis(pos, term, position[1], None, result)
                 }
             elif self.reference_basis[claim.number].get(pos) is None:
-                result = self._reference_has_basis(claim, term, position, self.claims)
+                result = self._reference_has_basis(claim, term, position[0], self.claims)
                 self.reference_basis[claim.number].update(
-                    {pos: RefBasis(pos, term, None, result)}
+                    {pos: RefBasis(pos, term, position[1], None, result)}
                 )
             elif self.reference_basis[claim.number].get(pos).hasbasis_confirmed is None:
-                result = self._reference_has_basis(claim, term, position, self.claims)
+                result = self._reference_has_basis(claim, term, position[0], self.claims)
                 self.reference_basis[claim.number].update(
-                    {pos: RefBasis(pos, term, None, result)}
+                    {pos: RefBasis(pos, term, position[1], None, result)}
                 )
 
-    def _get_terminology(self, claim: Claim, length: int) -> dict[str, int]:
-        PATTERN = "(?:所述的|所述|该)([^，。；,;]{1," f"{length}" "})"
+    def _get_terminology(self, claim: Claim, length: int) -> dict[str, tuple[int, str]]:
+        preceding_words = "所述的?|上述的?|前述的?|该些?)"
+        PATTERN = (
+            "(?:"
+            f"{preceding_words}"
+            "([^，。；,;]{1,"
+            f"{length}"
+            "}).*?(?=[，。；,;]|"
+            f"{preceding_words}"
+        )
         pattern = re.compile(PATTERN)
 
         terms = {}
         for match in pattern.finditer(claim.content):
-            terms.setdefault(match.group(1), match.start())
+            terms.setdefault(match.group(1), (match.start(), match.group()))
 
         return terms
 

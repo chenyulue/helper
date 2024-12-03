@@ -1,7 +1,7 @@
 from collections.abc import Iterator
 from typing import Literal, TypeAlias
 
-from cydifflib import SequenceMatcher
+from cydifflib import SequenceMatcher # type: ignore
 
 OpCode: TypeAlias = Literal["equal", "replace", "delete", "insert"]
 

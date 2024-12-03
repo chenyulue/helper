@@ -52,47 +52,65 @@ class Window(QMainWindow, Ui_mainWindow):
         self._connectSignalsAndSlots()
 
     def display_reference_basis(self, ref_basis: dict[int, dict[int, RefBasis]]):
-        # TODO:
-        self.resultText.clear()
-        
+        n = 0
         for claim_number, bases in ref_basis.items():
             for position, basis in bases.items():
                 if basis.hasbasis_confirmed is False:
-                    self.resultText.append(f"{claim_number}-{basis.position} {basis.term} confirmed")
-                elif basis.hasbasis_confirmed is None and basis.hasbasis_checked is False:
-                    self.resultText.append(f"{claim_number}-{basis.position} {basis.term} not confirmed")
+                    self._format_ref_basis(n+1, claim_number, basis)
+                    n += 1
+                elif (
+                    basis.hasbasis_confirmed is None and basis.hasbasis_checked is False
+                ):
+                    self._format_ref_basis(n+1, claim_number, basis)
+                    n += 1
+
+    def _format_ref_basis(self, number: int, claim_number: int, basis: RefBasis):
+        pre, post = basis.context.split(basis.term)
+
+        cursor = self.resultText.textCursor()
+
+        char_format = QTextCharFormat()
+        char_format.setForeground(Qt.red)
+        char_format.setFontUnderline(True)
+
+        cursor.insertText(f"{number}、权利要求{claim_number}中“{pre}")
+        cursor.insertText(basis.term, char_format)
+
+        char_format.setForeground(Qt.black)
+        char_format.setFontUnderline(False)
+        cursor.insertText(f"{post}”有缺乏引用基础的表述 ({basis.position})\n", char_format)
 
     def _add_widgets_for_toolbar(self) -> None:
         self.segmentCheckBox = QCheckBox("分词模式", parent=self.widgetToolBar)
         label = QLabel("最短截词长度:", parent=self.widgetToolBar)
         self.lengthSpinBox = QSpinBox(parent=self.widgetToolBar)
         self.checkButton = QPushButton("检查", parent=self.widgetToolBar)
-        self.removeButton = QPushButton("清空", parent=self.widgetToolBar)
+        self.clearButton = QPushButton("清空", parent=self.widgetToolBar)
 
         self.checkButton.setStyleSheet("font-weight: bold;")
-        self.removeButton.setStyleSheet("font-weight: bold;")
+        self.clearButton.setStyleSheet("font-weight: bold;")
 
         self.lengthSpinBox.setRange(1, 20)
-        self.lengthSpinBox.lineEdit().setReadOnly(True) # type: ignore
+        self.lengthSpinBox.lineEdit().setReadOnly(True)  # type: ignore
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.widgetToolBar.addWidget(spacer)
-        
+
         self.widgetToolBar.addWidget(self.segmentCheckBox)
 
         self.widgetToolBar.addSeparator()
-        
+
         self.widgetToolBar.addWidget(label)
         self.widgetToolBar.addWidget(self.lengthSpinBox)
-        
+
         self.widgetToolBar.addSeparator()
 
         spacer1 = QWidget()
         spacer1.setFixedSize(10, 10)
         self.widgetToolBar.addWidget(self.checkButton)
         self.widgetToolBar.addWidget(spacer1)
-        self.widgetToolBar.addWidget(self.removeButton)
+        self.widgetToolBar.addWidget(self.clearButton)
 
     def _connectSignalsAndSlots(self):
         self.aboutAction.triggered.connect(self._showAboutDialog)
@@ -102,6 +120,18 @@ class Window(QMainWindow, Ui_mainWindow):
         self.copyAction.triggered.connect(self._copy_text)
         self.cutAction.triggered.connect(self._cut_text)
         self.pasteAction.triggered.connect(self._paste_text)
+
+        self.clearButton.clicked.connect(self._clear_text)
+
+    def _clear_text(self):
+        for textWidget in [
+            self.claimText,
+            self.descriptionText,
+            self.figureText,
+            self.abstractText,
+            self.resultText,
+        ]:
+            textWidget.clear()
 
     def _showAboutDialog(self) -> None:
         self.aboutDialog.exec_()
@@ -252,7 +282,9 @@ class CmpWidget(QWidget, Ui_cmpWidget):
     ):
         if texts is not None:
             a, _ = texts
-            self._add_formatted_text(self.resultText, a[index_a[0] : index_a[1]], bold=False)
+            self._add_formatted_text(
+                self.resultText, a[index_a[0] : index_a[1]], bold=False
+            )
 
     def _apply_format(
         self,
@@ -311,7 +343,7 @@ class AboutDialog(QDialog, Ui_aboutDialog):
         # loadUi(UI_PATH / "aboutDialog.ui", self)
         self.setupUi(self)
 
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint) # type: ignore
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)  # type: ignore
 
 
 class SearchDialog(QDialog, Ui_searchDialog):
@@ -319,4 +351,4 @@ class SearchDialog(QDialog, Ui_searchDialog):
         super().__init__(parent)
         self.setupUi(self)
 
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint) # type: ignore
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)  # type: ignore

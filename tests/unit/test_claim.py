@@ -97,12 +97,12 @@ def test_reference_has_basis(claims1, number, term, expected):
 def test_get_terminology(claims1):
     claim_model = ClaimModel(claims1)
     result = claim_model._get_terminology(claim_model.claims[11], 3)
-    assert result == {"电流引": 32, "外延层": 49, "场效应": 16}
+    assert result == {"电流引": (32,"所述电流引导层（9）的掺杂浓度大于"), "外延层": (49,"所述外延层"), "场效应": (16,"所述的场效应晶体管")}
 
     result = claim_model._get_terminology(claim_model.claims[11], 5)
-    assert result == {"电流引导层": 32, "外延层": 49, "场效应晶体": 16}
+    assert result == {"电流引导层": (32,"所述电流引导层（9）的掺杂浓度大于"), "外延层": (49,"所述外延层"), "场效应晶体": (16,"所述的场效应晶体管")}
 
     result = claim_model._get_terminology(claim_model.claims[7], 3)
-    assert result["纳米线"] == 43
+    assert result["纳米线"] == (43,"所述纳米线第二掺杂类型的源区（16）")
     
     

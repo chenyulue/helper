@@ -28,17 +28,25 @@ class App(QApplication):
     def check_defects(self) -> None:
         self.check_claim_defects()
 
+        self.display_check_result()
+
     def check_claim_defects(self) -> None:
         claims = self.window.claimText.toPlainText()
         self.claim_model.reset_model(claims)
         
         self.check_claim_ref_basis()
 
+    def display_check_result(self) -> None:
+        self.window.resultText.clear()
+
+        if self.window.claimCheckbox.isChecked():
+            self.window.display_reference_basis(self.claim_model.reference_basis)
+
     def check_claim_ref_basis(self) -> None:
         if not self.window.segmentCheckBox.isChecked():
             length = self.window.lengthSpinBox.value()
             self.claim_model.check_all_reference_basis(length)
-            self.window.display_reference_basis(self.claim_model.reference_basis)
+            
 
     def compare_texts(self) -> None:
         self.window.cmpWidget.clear_format()
