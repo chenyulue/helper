@@ -10,6 +10,10 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from .CutomWidgets import ClickableTextBrowser
+
+QtWidgets.QTextBrowser = ClickableTextBrowser
+
 
 class Ui_mainWindow(object):
     def setupUi(self, mainWindow):

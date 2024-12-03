@@ -56,12 +56,12 @@ class Window(QMainWindow, Ui_mainWindow):
         for claim_number, bases in ref_basis.items():
             for position, basis in bases.items():
                 if basis.hasbasis_confirmed is False:
-                    self._format_ref_basis(n+1, claim_number, basis)
+                    self._format_ref_basis(n + 1, claim_number, basis)
                     n += 1
                 elif (
                     basis.hasbasis_confirmed is None and basis.hasbasis_checked is False
                 ):
-                    self._format_ref_basis(n+1, claim_number, basis)
+                    self._format_ref_basis(n + 1, claim_number, basis)
                     n += 1
 
     def _format_ref_basis(self, number: int, claim_number: int, basis: RefBasis):
@@ -70,14 +70,59 @@ class Window(QMainWindow, Ui_mainWindow):
         cursor = self.resultText.textCursor()
 
         char_format = QTextCharFormat()
-        char_format.setForeground(Qt.red)
-        char_format.setFontUnderline(True)
+        cursor.insertText(f"{number}、权利要求{claim_number}中“{pre}", char_format)
 
-        cursor.insertText(f"{number}、权利要求{claim_number}中“{pre}")
+        char_format.setForeground(Qt.red)  # type: ignore
+        char_format.setFontUnderline(True)
         cursor.insertText(basis.term, char_format)
 
         char_format = QTextCharFormat()
-        cursor.insertText(f"{post}”有缺乏引用基础的表述 ({basis.position})\n", char_format)
+        cursor.insertText(
+            f"{post}”有缺乏引用基础的表述 ({basis.position})\n", char_format
+        )
+
+    def add_formatted_text(
+        self,
+        text: str,
+        underline: bool = False,
+        bold: bool = False,
+        strikethrough: bool = False,
+        forground: str = "",
+        is_html: bool = False,
+    ) -> None:
+        """向缺陷结果显示文本框中添加格式化文本，如果is_html为True，则其他格式被忽略。
+
+        Parameters
+        ----------
+        text : str
+            待添加的文本
+        underline : bool, optional
+            添加下划线, by default False
+        bold : bool, optional
+            字体加粗, by default False
+        strikethrough : bool, optional
+            添加删除线, by default False
+        forground : str, optional
+            字体颜色, by default ""
+        is_html : str, optional
+            文本是否为html文本, by default False
+        """
+        cursor = self.resultText.textCursor()
+        format = QTextCharFormat()
+
+        if forground:
+            format.setForeground(QColor(forground))
+        if underline:
+            format.setUnderlineStyle(QTextCharFormat.SingleUnderline)
+        if strikethrough:
+            format.setFontStrikeOut(True)
+        if bold:
+            format.setFontWeight(QFont.Bold)
+
+        if is_html:
+            cursor.insertHtml(text)
+        else:
+            cursor.insertText(text, format)
 
     def _add_widgets_for_toolbar(self) -> None:
         self.segmentCheckBox = QCheckBox("分词模式", parent=self.widgetToolBar)

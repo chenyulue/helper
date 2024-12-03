@@ -127,21 +127,35 @@ class ClaimModel:
         for claim in self.claims:
             self._check_reference_basis(claim, length)
 
+    def get_all_reference_paths(self) -> None:
+        """获取所有权利要求的引用路径"""
+        for i, claim in enumerate(self.claims):
+            paths = self._flatten_paths(
+                self._get_reference_path(i + 1, self.claims)
+            )
+            self.reference_path[i+1] = paths[1:]
+
     def _check_reference_basis(self, claim: Claim, length: int) -> None:
         for term, position in self._get_terminology(claim, length).items():
             pos = claim.start_pos + position[0]
             if self.reference_basis.get(claim.number) is None:
-                result = self._reference_has_basis(claim, term, position[0], self.claims)
+                result = self._reference_has_basis(
+                    claim, term, position[0], self.claims
+                )
                 self.reference_basis[claim.number] = {
                     pos: RefBasis(pos, term, position[1], None, result)
                 }
             elif self.reference_basis[claim.number].get(pos) is None:
-                result = self._reference_has_basis(claim, term, position[0], self.claims)
+                result = self._reference_has_basis(
+                    claim, term, position[0], self.claims
+                )
                 self.reference_basis[claim.number].update(
                     {pos: RefBasis(pos, term, position[1], None, result)}
                 )
             elif self.reference_basis[claim.number].get(pos).hasbasis_confirmed is None:
-                result = self._reference_has_basis(claim, term, position[0], self.claims)
+                result = self._reference_has_basis(
+                    claim, term, position[0], self.claims
+                )
                 self.reference_basis[claim.number].update(
                     {pos: RefBasis(pos, term, position[1], None, result)}
                 )
