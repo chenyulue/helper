@@ -76,8 +76,7 @@ class Window(QMainWindow, Ui_mainWindow):
         cursor.insertText(f"{number}、权利要求{claim_number}中“{pre}")
         cursor.insertText(basis.term, char_format)
 
-        char_format.setForeground(Qt.black)
-        char_format.setFontUnderline(False)
+        char_format = QTextCharFormat()
         cursor.insertText(f"{post}”有缺乏引用基础的表述 ({basis.position})\n", char_format)
 
     def _add_widgets_for_toolbar(self) -> None:
