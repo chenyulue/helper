@@ -5,13 +5,14 @@ from PyQt5.QtGui import QFont, QSyntaxHighlighter, QTextCharFormat, QTextCursor,
 import bisect, re
 from typing import Any
 
+
 class CustomTextBrowser(QTextBrowser):
     # 定义信号，当点击记录位置的文本时发送
     textClicked = pyqtSignal(dict, str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.clickable_text = {} # 记录信号传递的数据
+        self.clickable_text = {}  # 记录信号传递的数据
         self.text_positions = []  # 记录文本位置及相关数据
         self.setTextInteractionFlags(Qt.NoTextInteraction)
 
@@ -33,6 +34,46 @@ class CustomTextBrowser(QTextBrowser):
         start_pos = cursor.position()
 
         char_format = QTextCharFormat()
+        char_format.setFontItalic(italic)
+        char_format.setFontStrikeOut(strikethrough)
+        if underline:
+            char_format.setUnderlineStyle(QTextCharFormat.SingleUnderline)
+        if bold:
+            char_format.setFontWeight(QFont.Bold)
+        if forground is not None:
+            char_format.setForeground(QColor(forground))
+        if background is not None:
+            char_format.setBackground(QColor(background))
+
+        cursor.insertText(text, char_format)
+
+        end_pos = cursor.position()
+
+        if record_position:
+            self.add_clickable_position(start_pos, end_pos, data)
+
+        return start_pos, end_pos
+
+    def format_text(
+        self,
+        start_pos: int,
+        end_pos: int,
+        *,
+        forground: str | None = None,
+        background: str | None = None,
+        bold: bool = False,
+        italic: bool = False,
+        underline: bool = False,
+        strikethrough: bool = False,
+    ):
+        cursor = self.textCursor()
+        cursor.setPosition(start_pos)
+        cursor.setPosition(end_pos, QTextCursor.KeepAnchor)
+
+        extra_selection = QTextBrowser.ExtraSelection()
+        extra_selection.cursor = cursor
+
+        char_format = QTextCharFormat()
         char_format.setFontUnderline(underline)
         char_format.setFontItalic(italic)
         char_format.setFontStrikeOut(strikethrough)
@@ -43,16 +84,17 @@ class CustomTextBrowser(QTextBrowser):
         if background is not None:
             char_format.setBackground(QColor(background))
 
-        cursor.insertText(text, char_format)
+        extra_selection.format = char_format
+
+        existing_selection = self.extraSelections()
+        existing_selection.append(extra_selection)
+
+        self.setExtraSelections(existing_selection)
         
-        end_pos = cursor.position()
 
-        if record_position:
-            self.add_clickable_position(start_pos, end_pos, data)
-
-        return start_pos, end_pos
-
-    def add_clickable_position(self, start_pos: int, end_pos: int, data: dict[str, Any]|None=None):
+    def add_clickable_position(
+        self, start_pos: int, end_pos: int, data: dict[str, Any] | None = None
+    ):
         bisect.insort(self.text_positions, start_pos)
         bisect.insort(self.text_positions, end_pos)
         self.clickable_text[(start_pos, end_pos)] = data
@@ -83,14 +125,17 @@ class CustomTextBrowser(QTextBrowser):
     def handle_click(self, event) -> dict[str, Any] | None:
         cursor = self.cursorForPosition(event.pos())
         index = bisect.bisect(self.text_positions, cursor.position())
-        if index - 1 < 0:
+        if index - 1 < 0 or index >= len(self.text_positions):
             return None
-        return self.clickable_text.get((self.text_positions[index-1], self.text_positions[index]))
+        return self.clickable_text.get(
+            (self.text_positions[index - 1], self.text_positions[index])
+        )
 
     def clear(self):
         self.text_positions = []
         self.clickable_text = {}
         super().clear()
+
 
 class MyHighlighter(QSyntaxHighlighter):
     def __init__(self, keywords, parent):

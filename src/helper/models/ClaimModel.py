@@ -53,6 +53,8 @@ class ClaimModel:
         """
         self._claims = new_claims
         self.claims = self._parse_claims()
+
+    def reset_claim_check(self) -> None:
         self.reference_basis = {}
         self.reference_path = {}
 
@@ -160,6 +162,8 @@ class ClaimModel:
                 self.reference_basis[claim.number].update(
                     {pos: RefBasis(pos, term, position[1], None, result)}
                 )
+            else:
+                self.reference_basis[claim.number][pos].term = term
 
     def _get_terminology(self, claim: Claim, length: int) -> dict[str, tuple[int, str]]:
         preceding_words = "所述的?|上述的?|前述的?|该些?)"

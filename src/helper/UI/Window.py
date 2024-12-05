@@ -36,6 +36,8 @@ from .Ui_RefDialog import Ui_refDialog
 
 RED = "red"
 BLUE = "blue"
+PINK = "pink"
+GREEN = "#95FA9B"
 
 
 class Window(QMainWindow, Ui_mainWindow):
@@ -58,23 +60,40 @@ class Window(QMainWindow, Ui_mainWindow):
         for claim_number, bases in ref_basis.items():
             for position, basis in bases.items():
                 if basis.hasbasis_confirmed is False:
-                    self._format_ref_basis(n + 1, claim_number, basis)
+                    start_pos, end_pos = self._format_ref_basis(n + 1, claim_number, basis)
+                    self.resultText.format_text(start_pos, end_pos, background=PINK)
                     n += 1
                 elif (
                     basis.hasbasis_confirmed is None and basis.hasbasis_checked is False
                 ):
                     self._format_ref_basis(n + 1, claim_number, basis)
                     n += 1
+                elif self.showAllCheckBox.isChecked() and basis.hasbasis_confirmed is True:
+                    start_pos, end_pos = self._format_ref_basis(n + 1, claim_number, basis)
+                    self.resultText.format_text(start_pos, end_pos, background=GREEN)
+                    n += 1
 
-    def _format_ref_basis(self, number: int, claim_number: int, basis: RefBasis):
+    def _format_ref_basis(self, number: int, claim_number: int, basis: RefBasis) -> tuple[int, int]:
+        print(basis)
         pre, post = basis.context.split(basis.term)
 
-        start_pos, _ = self.resultText.add_text(f"{number}、权利要求{claim_number}中“{pre}")
+        start_pos, _ = self.resultText.add_text(
+            f"{number}、权利要求{claim_number}中“{pre}"
+        )
         self.resultText.add_text(basis.term, forground=RED, underline=True)
-        _, end_pos = self.resultText.add_text(f"{post}”有缺乏引用基础的表述 ({basis.position})\n")
+        _, end_pos = self.resultText.add_text(
+            f"{post}”有缺乏引用基础的表述 ({basis.position})\n"
+        )
 
-        data = {"type": "reference basis", "data": basis}
+        data = {
+            "type": "reference basis",
+            "data": basis,
+            "position": (start_pos, end_pos),
+            "claim_num": claim_number,
+        }
         self.resultText.add_clickable_position(start_pos, end_pos, data)
+
+        return start_pos, end_pos
 
     def _add_widgets_for_toolbar(self) -> None:
         self.segmentCheckBox = QCheckBox("分词模式", parent=self.widgetToolBar)
@@ -349,9 +368,10 @@ class SearchDialog(QDialog, Ui_searchDialog):
 
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)  # type: ignore
 
+
 class RefDialog(QDialog, Ui_refDialog):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.setupUi(self)
 
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint) # type: ignore
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)  # type: ignore

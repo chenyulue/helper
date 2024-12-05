@@ -7,6 +7,9 @@ from .models import CmpModel, ClaimModel
 
 ClickType: TypeAlias = Literal["<left>", "<double-L>", "right"]
 
+GREEN = "#95FA9B"
+PINK = "pink"
+
 class App(QApplication):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -28,6 +31,8 @@ class App(QApplication):
         self.window.checkButton.clicked.connect(self.check_defects)
 
         self.window.resultText.textClicked.connect(self.on_text_clicked)
+
+        self.window.claimText.textChanged.connect(self.claim_model.reset_claim_check)
 
     def check_defects(self) -> None:
         self.check_claim_defects()
@@ -67,14 +72,34 @@ class App(QApplication):
     def handle_left_click(self, data):
         if data["type"] == "open ref_dialog":
             self.open_ref_dialog(data)
+        elif data["type"] == "reference basis":
+            print(data)
 
     def handle_double_click(self, data):
         # TODO
-        pass
+        if data["type"] == "reference basis":
+            start_pos, end_pos = data["position"]
+            key = data["data"].position
+            claim_number = data["claim_num"]
+            if self.claim_model.reference_basis[claim_number][key].hasbasis_confirmed is not True:
+                self.window.resultText.format_text(start_pos, end_pos, background=GREEN)
+                self.claim_model.reference_basis[claim_number][key].hasbasis_confirmed=True
+            else:
+                self.window.resultText.format_text(start_pos, end_pos, background="white")
+                self.claim_model.reference_basis[claim_number][key].hasbasis_confirmed=None
 
     def handle_right_click(self, data):
         # TODO
-        pass
+        if data["type"] == "reference basis":
+            start_pos, end_pos = data["position"]
+            key = data["data"].position
+            claim_number = data["claim_num"]
+            if self.claim_model.reference_basis[claim_number][key].hasbasis_confirmed is not False:
+                self.window.resultText.format_text(start_pos, end_pos, background=PINK)
+                self.claim_model.reference_basis[claim_number][key].hasbasis_confirmed=False
+            else:
+                self.window.resultText.format_text(start_pos, end_pos, background="white")
+                self.claim_model.reference_basis[claim_number][key].hasbasis_confirmed=None
 
     def open_ref_dialog(self, data):
         text = [f"权利要求{key}: {', '.join(str(v) for v in value)}" for key, value in data["data"].items()]

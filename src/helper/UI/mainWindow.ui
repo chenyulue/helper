@@ -315,6 +315,13 @@
               </property>
              </spacer>
             </item>
+            <item>
+             <widget class="QCheckBox" name="showAllCheckBox">
+              <property name="text">
+               <string>显示所有引用基础</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>
