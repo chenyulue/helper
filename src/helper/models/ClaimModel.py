@@ -53,8 +53,6 @@ class ClaimModel:
         """
         self._claims = new_claims
         self.claims = self._parse_claims()
-
-    def reset_claim_check(self) -> None:
         self.reference_basis = {}
         self.reference_path = {}
 

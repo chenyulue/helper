@@ -1,8 +1,9 @@
 from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtWidgets import QTextBrowser, QApplication, QMessageBox, QWidget
+from PyQt5.QtWidgets import QTextBrowser, QWidget
 from PyQt5.QtGui import QFont, QSyntaxHighlighter, QTextCharFormat, QTextCursor, QColor
 
-import bisect, re
+import bisect
+import re
 from typing import Any
 
 
@@ -22,7 +23,7 @@ class CustomTextBrowser(QTextBrowser):
         *,
         record_position: bool = False,
         data: dict[str, Any] | None = None,
-        forground: str | None = None,
+        foreground: str | None = None,
         background: str | None = None,
         bold: bool = False,
         italic: bool = False,
@@ -40,8 +41,8 @@ class CustomTextBrowser(QTextBrowser):
             char_format.setUnderlineStyle(QTextCharFormat.SingleUnderline)
         if bold:
             char_format.setFontWeight(QFont.Bold)
-        if forground is not None:
-            char_format.setForeground(QColor(forground))
+        if foreground is not None:
+            char_format.setForeground(QColor(foreground))
         if background is not None:
             char_format.setBackground(QColor(background))
 
@@ -59,7 +60,7 @@ class CustomTextBrowser(QTextBrowser):
         start_pos: int,
         end_pos: int,
         *,
-        forground: str | None = None,
+        foreground: str | None = None,
         background: str | None = None,
         bold: bool = False,
         italic: bool = False,
@@ -77,12 +78,17 @@ class CustomTextBrowser(QTextBrowser):
         char_format.setFontUnderline(underline)
         char_format.setFontItalic(italic)
         char_format.setFontStrikeOut(strikethrough)
+
         if bold:
             char_format.setFontWeight(QFont.Bold)
-        if forground is not None:
-            char_format.setForeground(QColor(forground))
+
+        if foreground is not None:
+            char_format.setForeground(QColor(foreground))
+
         if background is not None:
             char_format.setBackground(QColor(background))
+        else:
+            char_format.setBackground(QColor("white"))
 
         extra_selection.format = char_format
 
@@ -90,7 +96,6 @@ class CustomTextBrowser(QTextBrowser):
         existing_selection.append(extra_selection)
 
         self.setExtraSelections(existing_selection)
-        
 
     def add_clickable_position(
         self, start_pos: int, end_pos: int, data: dict[str, Any] | None = None
@@ -138,98 +143,126 @@ class CustomTextBrowser(QTextBrowser):
 
 
 class MyHighlighter(QSyntaxHighlighter):
-    def __init__(self, keywords, parent):
+    def __init__(
+        self,
+        parent: QWidget,
+        pattern: str|None = None,
+        *,
+        foreground: str | None = None,
+        background: str | None = None,
+        bold: bool = False,
+        italic: bool = False,
+        underline: bool = False,
+        strikethrough: bool = False,
+    ):
         super().__init__(parent)
-        self.keywords = keywords
+        self._pattern = pattern
+        self._foreground = foreground
+        self._background = background
+        self._bold = bold
+        self._italic = italic
+        self._underline = underline
+        self._strikethrough = strikethrough
 
     def highlightBlock(self, block):
-        if not self.keywords:
+        if self._pattern is None:
             return
-        charFormat = QTextCharFormat()
-        charFormat.setFontWeight(QFont.Bold)
-        charFormat.setForeground(Qt.darkMagenta)
-        regex = re.compile("|".join(self.keywords), re.IGNORECASE)
+        char_format = QTextCharFormat()
+        char_format.setFontUnderline(self._underline)
+        char_format.setFontItalic(self._italic)
+        char_format.setFontStrikeOut(self._strikethrough)
+
+        if self._bold:
+            char_format.setFontWeight(QFont.Bold)
+
+        if self._foreground is not None:
+            char_format.setForeground(QColor(self._foreground))
+
+        if self._background is not None:
+            char_format.setBackground(QColor(self._background))
+
+        regex = re.compile(self._pattern, re.IGNORECASE|re.MULTILINE)
         result = regex.search(block, 0)
         while result:
-            self.setFormat(result.start(), result.end() - result.start(), charFormat)
+            self.setFormat(result.start(), result.end() - result.start(), char_format)
             result = regex.search(block, result.end())
 
 
-class ClickableTextBrowser(QTextBrowser):
-    text_clicked = pyqtSignal("QTextCursor")
+# class ClickableTextBrowser(QTextBrowser):
+#     text_clicked = pyqtSignal("QTextCursor")
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.setMouseTracking(True)
-        # self.setTextInteractionFlags(Qt.NoTextInteraction)
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.setMouseTracking(True)
+#         # self.setTextInteractionFlags(Qt.NoTextInteraction)
 
-        # self.phrases contains all phrases that should be clickable.
-        self.phrases = set()
-        self.cursors = []
+#         # self.phrases contains all phrases that should be clickable.
+#         self.phrases = set()
+#         self.cursors = []
 
-        # ExtraSelection object for highlighting phrases under the mouse cursor
-        self.selection = QTextBrowser.ExtraSelection()
-        self.selection.format.setBackground(Qt.blue)
-        self.selection.format.setForeground(Qt.white)
-        self.selected_cursor = None
+#         # ExtraSelection object for highlighting phrases under the mouse cursor
+#         self.selection = QTextBrowser.ExtraSelection()
+#         self.selection.format.setBackground(Qt.blue)
+#         self.selection.format.setForeground(Qt.white)
+#         self.selected_cursor = None
 
-        # custom highlighter for highlighting all phrases
-        self.highlighter = MyHighlighter(self.phrases, self)
-        self.document().contentsChange.connect(self.text_has_changed)
+#         # custom highlighter for highlighting all phrases
+#         self.highlighter = MyHighlighter(self.phrases, self)
+#         self.document().contentsChange.connect(self.text_has_changed)
 
-    @property
-    def selected_cursor(self):
-        return None if self.selection.cursor == QTextCursor() else self.selection.cursor
+#     @property
+#     def selected_cursor(self):
+#         return None if self.selection.cursor == QTextCursor() else self.selection.cursor
 
-    @selected_cursor.setter
-    def selected_cursor(self, cursor):
-        if cursor is None:
-            cursor = QTextCursor()
-        if self.selection.cursor != cursor:
-            self.selection.cursor = cursor
-            self.setExtraSelections([self.selection])
+#     @selected_cursor.setter
+#     def selected_cursor(self, cursor):
+#         if cursor is None:
+#             cursor = QTextCursor()
+#         if self.selection.cursor != cursor:
+#             self.selection.cursor = cursor
+#             self.setExtraSelections([self.selection])
 
-    def mouseMoveEvent(self, event):
-        """Update currently selected cursor"""
-        cursor = self.cursorForPosition(event.pos())
-        self.selected_cursor = self.find_selected_cursor(cursor)
+#     def mouseMoveEvent(self, event):
+#         """Update currently selected cursor"""
+#         cursor = self.cursorForPosition(event.pos())
+#         self.selected_cursor = self.find_selected_cursor(cursor)
 
-    def mouseReleaseEvent(self, event):
-        """Emit self.selected_cursor signal when currently hovering over selectable phrase"""
-        if self.selected_cursor:
-            self.text_clicked.emit(self.selected_cursor)
-            self.selected_cursor = None
+#     def mouseReleaseEvent(self, event):
+#         """Emit self.selected_cursor signal when currently hovering over selectable phrase"""
+#         if self.selected_cursor:
+#             self.text_clicked.emit(self.selected_cursor)
+#             self.selected_cursor = None
 
-    def add_phrase(self, phrase):
-        """Add phrase to set of phrases and update list of text cursors"""
-        if phrase not in self.phrases:
-            self.phrases.add(phrase)
-            self.find_cursors(phrase)
-            self.highlighter.rehighlight()
+#     def add_phrase(self, phrase):
+#         """Add phrase to set of phrases and update list of text cursors"""
+#         if phrase not in self.phrases:
+#             self.phrases.add(phrase)
+#             self.find_cursors(phrase)
+#             self.highlighter.rehighlight()
 
-    def find_cursors(self, phrase):
-        """Find all occurrences of phrase in the current document and add corresponding text cursor
-        to self.cursors"""
-        if not phrase:
-            return
-        self.moveCursor(self.textCursor().Start)
-        while self.find(phrase):
-            cursor = self.textCursor()
-            bisect.insort(self.cursors, cursor)
-        self.moveCursor(self.textCursor().Start)
+#     def find_cursors(self, phrase):
+#         """Find all occurrences of phrase in the current document and add corresponding text cursor
+#         to self.cursors"""
+#         if not phrase:
+#             return
+#         self.moveCursor(self.textCursor().Start)
+#         while self.find(phrase):
+#             cursor = self.textCursor()
+#             bisect.insort(self.cursors, cursor)
+#         self.moveCursor(self.textCursor().Start)
 
-    def find_selected_cursor(self, cursor):
-        """return text cursor corresponding to current mouse position or None if mouse not currently
-        over selectable phrase"""
-        position = cursor.position()
-        index = bisect.bisect(self.cursors, cursor)
-        if index < len(self.cursors) and self.cursors[index].anchor() <= position:
-            return self.cursors[index]
-        return None
+#     def find_selected_cursor(self, cursor):
+#         """return text cursor corresponding to current mouse position or None if mouse not currently
+#         over selectable phrase"""
+#         position = cursor.position()
+#         index = bisect.bisect(self.cursors, cursor)
+#         if index < len(self.cursors) and self.cursors[index].anchor() <= position:
+#             return self.cursors[index]
+#         return None
 
-    def text_has_changed(self):
-        self.cursors.clear()
-        self.selected_cursor = None
-        for phrase in self.phrases:
-            self.find_cursors(phrase)
-            self.highlighter.rehighlight()
+#     def text_has_changed(self):
+#         self.cursors.clear()
+#         self.selected_cursor = None
+#         for phrase in self.phrases:
+#             self.find_cursors(phrase)
+#             self.highlighter.rehighlight()

@@ -10,7 +10,6 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_refDialog(object):
     def setupUi(self, refDialog):
         refDialog.setObjectName("refDialog")
