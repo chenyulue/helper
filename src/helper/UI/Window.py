@@ -82,7 +82,7 @@ class Window(QMainWindow, Ui_mainWindow):
         )
         self.resultText.add_text(basis.term, forground=RED, underline=True)
         _, end_pos = self.resultText.add_text(
-            f"{post}”有缺乏引用基础的表述 ({basis.position})\n"
+            f"{post}”{'有' if basis.hasbasis_confirmed is not True else '没有'}缺乏引用基础的表述 ({basis.position})\n"
         )
 
         data = {
