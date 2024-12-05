@@ -42,6 +42,10 @@ build_search_dialog = {composite = [
     "pyuic5 -o src/helper/UI/Ui_SearchDialog.py src/helper/UI/searchDialog.ui",
     "trans_import.py src/helper/UI/Ui_SearchDialog.py"
 ]}
+build_ref_dialog = {composite = [
+    "pyuic5 -o src/helper/UI/Ui_RefDialog.py src/helper/UI/refDialog.ui",
+    "trans_import.py src/helper/UI/Ui_RefDialog.py"
+]}
 
 build_ui = {composite = [
     "build_resource", 
@@ -49,6 +53,7 @@ build_ui = {composite = [
     "build_about_dialog", 
     "build_cmpwindow", 
     "build_search_dialog",
+    "build_ref_dialog",
     ]}
 
 [tool.pdm.dev-dependencies]

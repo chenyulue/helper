@@ -1,9 +1,96 @@
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QTextBrowser, QApplication, QMessageBox, QWidget
-from PyQt5.QtGui import QFont, QSyntaxHighlighter, QTextCharFormat, QTextCursor
+from PyQt5.QtGui import QFont, QSyntaxHighlighter, QTextCharFormat, QTextCursor, QColor
 
 import bisect, re
+from typing import Any
 
+class CustomTextBrowser(QTextBrowser):
+    # 定义信号，当点击记录位置的文本时发送
+    textClicked = pyqtSignal(dict, str)
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.clickable_text = {} # 记录信号传递的数据
+        self.text_positions = []  # 记录文本位置及相关数据
+        self.setTextInteractionFlags(Qt.NoTextInteraction)
+
+    def add_text(
+        self,
+        text: str,
+        *,
+        record_position: bool = False,
+        data: dict[str, Any] | None = None,
+        forground: str | None = None,
+        background: str | None = None,
+        bold: bool = False,
+        italic: bool = False,
+        underline: bool = False,
+        strikethrough: bool = False,
+    ) -> tuple[int, int]:
+        cursor = self.textCursor()
+        cursor.movePosition(QTextCursor.End)
+        start_pos = cursor.position()
+
+        char_format = QTextCharFormat()
+        char_format.setFontUnderline(underline)
+        char_format.setFontItalic(italic)
+        char_format.setFontStrikeOut(strikethrough)
+        if bold:
+            char_format.setFontWeight(QFont.Bold)
+        if forground is not None:
+            char_format.setForeground(QColor(forground))
+        if background is not None:
+            char_format.setBackground(QColor(background))
+
+        cursor.insertText(text, char_format)
+        
+        end_pos = cursor.position()
+
+        if record_position:
+            self.add_clickable_position(start_pos, end_pos, data)
+
+        return start_pos, end_pos
+
+    def add_clickable_position(self, start_pos: int, end_pos: int, data: dict[str, Any]|None=None):
+        bisect.insort(self.text_positions, start_pos)
+        bisect.insort(self.text_positions, end_pos)
+        self.clickable_text[(start_pos, end_pos)] = data
+
+    def mousePressEvent(self, event):
+        """
+        重写鼠标按下事件，处理左键单击。
+        """
+        if event.button() == Qt.LeftButton:
+            data = self.handle_click(event)
+            if data:
+                self.textClicked.emit(data, "<left>")
+        super().mousePressEvent(event)
+
+    def mouseDoubleClickEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            data = self.handle_click(event)
+            if data:
+                self.textClicked.emit(data, "<double-L>")
+        super().mouseDoubleClickEvent(event)
+
+    def contextMenuEvent(self, event):
+        data = self.handle_click(event)
+        if data:
+            self.textClicked.emit(data, "<right>")
+        super().contextMenuEvent(event)
+
+    def handle_click(self, event) -> dict[str, Any] | None:
+        cursor = self.cursorForPosition(event.pos())
+        index = bisect.bisect(self.text_positions, cursor.position())
+        if index - 1 < 0:
+            return None
+        return self.clickable_text.get((self.text_positions[index-1], self.text_positions[index]))
+
+    def clear(self):
+        self.text_positions = []
+        self.clickable_text = {}
+        super().clear()
 
 class MyHighlighter(QSyntaxHighlighter):
     def __init__(self, keywords, parent):
@@ -16,10 +103,10 @@ class MyHighlighter(QSyntaxHighlighter):
         charFormat = QTextCharFormat()
         charFormat.setFontWeight(QFont.Bold)
         charFormat.setForeground(Qt.darkMagenta)
-        regex = re.compile('|'.join(self.keywords), re.IGNORECASE)
+        regex = re.compile("|".join(self.keywords), re.IGNORECASE)
         result = regex.search(block, 0)
         while result:
-            self.setFormat(result.start(),result.end()-result.start(), charFormat)
+            self.setFormat(result.start(), result.end() - result.start(), charFormat)
             result = regex.search(block, result.end())
 
 
@@ -58,26 +145,26 @@ class ClickableTextBrowser(QTextBrowser):
             self.setExtraSelections([self.selection])
 
     def mouseMoveEvent(self, event):
-        ''' Update currently selected cursor '''
+        """Update currently selected cursor"""
         cursor = self.cursorForPosition(event.pos())
         self.selected_cursor = self.find_selected_cursor(cursor)
 
     def mouseReleaseEvent(self, event):
-        ''' Emit self.selected_cursor signal when currently hovering over selectable phrase'''
+        """Emit self.selected_cursor signal when currently hovering over selectable phrase"""
         if self.selected_cursor:
             self.text_clicked.emit(self.selected_cursor)
             self.selected_cursor = None
 
     def add_phrase(self, phrase):
-        ''' Add phrase to set of phrases and update list of text cursors'''
+        """Add phrase to set of phrases and update list of text cursors"""
         if phrase not in self.phrases:
             self.phrases.add(phrase)
             self.find_cursors(phrase)
             self.highlighter.rehighlight()
 
     def find_cursors(self, phrase):
-        ''' Find all occurrences of phrase in the current document and add corresponding text cursor
-        to self.cursors '''
+        """Find all occurrences of phrase in the current document and add corresponding text cursor
+        to self.cursors"""
         if not phrase:
             return
         self.moveCursor(self.textCursor().Start)
@@ -87,8 +174,8 @@ class ClickableTextBrowser(QTextBrowser):
         self.moveCursor(self.textCursor().Start)
 
     def find_selected_cursor(self, cursor):
-        ''' return text cursor corresponding to current mouse position or None if mouse not currently
-        over selectable phrase'''
+        """return text cursor corresponding to current mouse position or None if mouse not currently
+        over selectable phrase"""
         position = cursor.position()
         index = bisect.bisect(self.cursors, cursor)
         if index < len(self.cursors) and self.cursors[index].anchor() <= position:

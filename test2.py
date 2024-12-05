@@ -1,79 +1,82 @@
-from PyQt5.QtWidgets import QTextBrowser, QApplication
-from PyQt5.QtGui import QTextCursor
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtWidgets import QApplication, QTextBrowser, QWidget, QVBoxLayout, QPushButton
+from PyQt5.QtGui import QTextCursor, QColor
+from PyQt5.QtCore import Qt, QEvent
 
-
-class CustomTextBrowser(QTextBrowser):
-    # 定义信号，当点击记录位置的文本时发送
-    textClicked = pyqtSignal(str)
-
+class ClickableTextBrowser(QTextBrowser):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.text_positions = []  # 记录文本位置及相关数据
+        self.clickable_ranges = []
 
-    def add_text(self, text, record_position=False, data=None):
-        """
-        添加文本到 QTextBrowser 中。
-        :param text: 要添加的文本
-        :param record_position: 是否记录文本位置
-        :param data: 记录的附加数据
-        """
+    def add_clickable_text(self, text, start_action, double_click_action, right_click_action):
         cursor = self.textCursor()
-        cursor.movePosition(QTextCursor.End)
-        start_pos = cursor.position()
-
         cursor.insertText(text)
-        end_pos = cursor.position()
-
-        if record_position:
-            # 保存文本起止位置及附加数据
-            self.text_positions.append((start_pos, end_pos, data))
+        range_start = cursor.position() - len(text)
+        range_end = cursor.position()
+        self.clickable_ranges.append((range_start, range_end, start_action, double_click_action, right_click_action))
 
     def mousePressEvent(self, event):
-        """
-        重写鼠标按下事件，处理左键单击。
-        """
         if event.button() == Qt.LeftButton:
-            self.handle_click(event)
+            for start, end, action, _, _ in self.clickable_ranges:
+                cursor = self.cursorForPosition(event.pos())
+                position = cursor.position()
+                if start <= position < end:
+                    if action is not None:
+                        action()
+                    break
         super().mousePressEvent(event)
 
-    def handle_click(self, event):
-        """
-        处理左键单击事件，发送信号。
-        """
-        cursor = self.cursorForPosition(event.pos())
-        pos = cursor.position()
+    def mouseDoubleClickEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            for start, end, _, action, _ in self.clickable_ranges:
+                cursor = self.cursorForPosition(event.pos())
+                position = cursor.position()
+                if start <= position < end:
+                    action()
+                    break
+        super().mouseDoubleClickEvent(event)
 
-        for start, end, data in self.text_positions:
-            if start <= pos <= end:
-                # 找到点击的记录位置，发送信号并附加数据
-                if data is not None:
-                    self.textClicked.emit(data)
-                else:
-                    self.textClicked.emit(f"位置范围: ({start}, {end})")
-                break
+    def contextMenuEvent(self, event):
+        for start, end, _, _, action in self.clickable_ranges:
+            cursor = self.cursorForPosition(event.pos())
+            position = cursor.position()
+            if start <= position < end:
+                action()
+                return
+        super().contextMenuEvent(event)
 
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout()
 
-# 示例运行
+        self.browser = ClickableTextBrowser()
+        self.browser.add_clickable_text("Click me once", self.on_single_click, None, None)
+        self.browser.add_clickable_text("\nDouble click me", None, self.on_double_click, None)
+        self.browser.add_clickable_text("\nRight click me", None, None, self.on_right_click)
+
+        layout.addWidget(self.browser)
+        self.setLayout(layout)
+
+    def on_single_click(self):
+        self.browser.setTextColor(QColor("red"))
+        self.browser.append("\nSingle clicked!")
+        self.browser.setTextColor(QColor("black"))
+
+    def on_double_click(self):
+        self.browser.setTextColor(QColor("blue"))
+        self.browser.append("\nDouble clicked!")
+        self.browser.setTextColor(QColor("black"))
+
+    def on_right_click(self):
+        self.browser.setTextColor(QColor("green"))
+        self.browser.append("\nRight clicked!")
+        self.browser.setTextColor(QColor("black"))
+
 if __name__ == "__main__":
-    import sys
+    app = QApplication([])
+    window = MainWindow()
+    window.show()
+    app.exec_()
 
-    def on_text_clicked(data):
-        print(f"点击的文本数据: {data}")
 
-    app = QApplication(sys.argv)
-    browser = CustomTextBrowser()
-    browser.resize(600, 400)
-    browser.show()
 
-    # 添加普通文本
-    browser.add_text("这是一段普通文本。\n", record_position=False)
-
-    # 添加可交互文本，附带数据
-    browser.add_text("这是可交互的文本1。\n", record_position=True, data="数据1")
-    browser.add_text("这是可交互的文本2。\n", record_position=True, data="数据2")
-
-    # 连接信号到槽
-    browser.textClicked.connect(on_text_clicked)
-
-    sys.exit(app.exec_())

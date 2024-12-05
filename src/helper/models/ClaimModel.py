@@ -127,13 +127,14 @@ class ClaimModel:
         for claim in self.claims:
             self._check_reference_basis(claim, length)
 
-    def get_all_reference_paths(self) -> None:
+    def get_all_reference_paths(self) -> dict[int, list[int]]:
         """获取所有权利要求的引用路径"""
         for i, claim in enumerate(self.claims):
             paths = self._flatten_paths(
                 self._get_reference_path(i + 1, self.claims)
             )
             self.reference_path[i+1] = paths[1:]
+        return self.reference_path
 
     def _check_reference_basis(self, claim: Claim, length: int) -> None:
         for term, position in self._get_terminology(claim, length).items():

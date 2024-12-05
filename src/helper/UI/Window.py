@@ -29,6 +29,7 @@ from .Ui_MainWindow import Ui_mainWindow
 from .Ui_CmpWidget import Ui_cmpWidget
 from .Ui_AboutDialog import Ui_aboutDialog
 from .Ui_SearchDialog import Ui_searchDialog
+from .Ui_RefDialog import Ui_refDialog
 
 # from ..assets import ASSETS
 # UI_PATH = ASSETS.parent / "UI"
@@ -45,6 +46,7 @@ class Window(QMainWindow, Ui_mainWindow):
 
         self.aboutDialog = AboutDialog(self)
         self.searchDialog = SearchDialog(self)
+        self.refDialog = RefDialog(self)
         self.cmpWidget = CmpWidget()
 
         self._add_widgets_for_toolbar()
@@ -67,62 +69,12 @@ class Window(QMainWindow, Ui_mainWindow):
     def _format_ref_basis(self, number: int, claim_number: int, basis: RefBasis):
         pre, post = basis.context.split(basis.term)
 
-        cursor = self.resultText.textCursor()
+        start_pos, _ = self.resultText.add_text(f"{number}、权利要求{claim_number}中“{pre}")
+        self.resultText.add_text(basis.term, forground=RED, underline=True)
+        _, end_pos = self.resultText.add_text(f"{post}”有缺乏引用基础的表述 ({basis.position})\n")
 
-        char_format = QTextCharFormat()
-        cursor.insertText(f"{number}、权利要求{claim_number}中“{pre}", char_format)
-
-        char_format.setForeground(Qt.red)  # type: ignore
-        char_format.setFontUnderline(True)
-        cursor.insertText(basis.term, char_format)
-
-        char_format = QTextCharFormat()
-        cursor.insertText(
-            f"{post}”有缺乏引用基础的表述 ({basis.position})\n", char_format
-        )
-
-    def add_formatted_text(
-        self,
-        text: str,
-        underline: bool = False,
-        bold: bool = False,
-        strikethrough: bool = False,
-        forground: str = "",
-        is_html: bool = False,
-    ) -> None:
-        """向缺陷结果显示文本框中添加格式化文本，如果is_html为True，则其他格式被忽略。
-
-        Parameters
-        ----------
-        text : str
-            待添加的文本
-        underline : bool, optional
-            添加下划线, by default False
-        bold : bool, optional
-            字体加粗, by default False
-        strikethrough : bool, optional
-            添加删除线, by default False
-        forground : str, optional
-            字体颜色, by default ""
-        is_html : str, optional
-            文本是否为html文本, by default False
-        """
-        cursor = self.resultText.textCursor()
-        format = QTextCharFormat()
-
-        if forground:
-            format.setForeground(QColor(forground))
-        if underline:
-            format.setUnderlineStyle(QTextCharFormat.SingleUnderline)
-        if strikethrough:
-            format.setFontStrikeOut(True)
-        if bold:
-            format.setFontWeight(QFont.Bold)
-
-        if is_html:
-            cursor.insertHtml(text)
-        else:
-            cursor.insertText(text, format)
+        data = {"type": "reference basis", "data": basis}
+        self.resultText.add_clickable_position(start_pos, end_pos, data)
 
     def _add_widgets_for_toolbar(self) -> None:
         self.segmentCheckBox = QCheckBox("分词模式", parent=self.widgetToolBar)
@@ -396,3 +348,10 @@ class SearchDialog(QDialog, Ui_searchDialog):
         self.setupUi(self)
 
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)  # type: ignore
+
+class RefDialog(QDialog, Ui_refDialog):
+    def __init__(self, parent=None) -> None:
+        super().__init__(parent)
+        self.setupUi(self)
+
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint) # type: ignore

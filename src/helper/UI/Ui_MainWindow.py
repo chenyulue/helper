@@ -10,9 +10,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from .CutomWidgets import ClickableTextBrowser
+from .CutomWidgets import CustomTextBrowser
 
-QtWidgets.QTextBrowser = ClickableTextBrowser
+QtWidgets.QTextBrowser = CustomTextBrowser
 
 
 class Ui_mainWindow(object):
