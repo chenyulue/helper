@@ -61,15 +61,31 @@ def test_get_reference_path():
         7: [4, 5],  # 权利要求7同时引用权利要求4和权利要求5
         8: [7],  # 权利要求8引用权利要求7
     }
-    claims = tuple([Claim(i, j, False, False, "", f"{i}+{j}", 0) for i, j in claims_references.items()])
+    claims = tuple(
+        [
+            Claim(i, j, False, False, "", f"{i}+{j}", 0)
+            for i, j in claims_references.items()
+        ]
+    )
     assert claim_model._get_reference_path(1, claims) == [[1]]
     assert claim_model._get_reference_path(2, claims) == [[2, 1]]
     assert claim_model._get_reference_path(3, claims) == [[3, 1]]
     assert claim_model._get_reference_path(4, claims) == [[4, 2, 1], [4, 3, 1]]
     assert claim_model._get_reference_path(5, claims) == [[5, 4, 2, 1], [5, 4, 3, 1]]
     assert claim_model._get_reference_path(6, claims) == [[6, 2, 1]]
-    assert claim_model._get_reference_path(7, claims) == [[7, 4, 2, 1], [7, 4, 3, 1], [7, 5, 4, 2, 1], [7, 5, 4, 3, 1]]
-    assert claim_model._get_reference_path(8, claims) == [[8, 7, 4, 2, 1], [8, 7, 4, 3, 1], [8, 7, 5, 4, 2, 1], [8, 7, 5, 4, 3, 1]]
+    assert claim_model._get_reference_path(7, claims) == [
+        [7, 4, 2, 1],
+        [7, 4, 3, 1],
+        [7, 5, 4, 2, 1],
+        [7, 5, 4, 3, 1],
+    ]
+    assert claim_model._get_reference_path(8, claims) == [
+        [8, 7, 4, 2, 1],
+        [8, 7, 4, 3, 1],
+        [8, 7, 5, 4, 2, 1],
+        [8, 7, 5, 4, 3, 1],
+    ]
+
 
 def test_flattern_path():
     claim_model = ClaimModel("")
@@ -79,30 +95,83 @@ def test_flattern_path():
         [1, 3, 4],
         [2, 3, 4],
     ]
-    assert claim_model._flatten_paths(paths) == [4,3,2,1]
+    assert claim_model._flatten_paths(paths) == [4, 3, 2, 1]
 
-@pytest.mark.parametrize("claims1, number, term, expected", [
-    ("", 1, "第一介质区", True),
-    ("", 12, "电流引导层", [10, 9, 5, 4, 3]),
-    ("", 8, "纳米线", False),
-    ("", 7, "电场屏蔽区", True)
-], indirect=["claims1"])
+
+@pytest.mark.parametrize(
+    "claims1, number, term, expected",
+    [
+        ("", 1, "第一介质区", True),
+        ("", 12, "电流引导层", [10, 9, 5, 4, 3]),
+        ("", 8, "纳米线", False),
+        ("", 7, "电场屏蔽区", True),
+    ],
+    indirect=["claims1"],
+)
 def test_reference_has_basis(claims1, number, term, expected):
     claim_model = ClaimModel(claims1)
     match = re.search(f"所述({term})", claim_model.claims[number - 1].content)
     if match:
         start_pos = match.start()
-        assert claim_model._reference_has_basis(claim_model.claims[number - 1], term, start_pos, claim_model.claims) == expected
+        assert (
+            claim_model._reference_has_basis(
+                claim_model.claims[number - 1], term, start_pos, claim_model.claims
+            )
+            == expected
+        )
+
 
 def test_get_terminology(claims1):
     claim_model = ClaimModel(claims1)
     result = claim_model._get_terminology(claim_model.claims[11], 3)
-    assert result == {"电流引": (32,"所述电流引导层（9）的掺杂浓度大于"), "外延层": (49,"所述外延层"), "场效应": (16,"所述的场效应晶体管")}
+    assert result == {
+        "电流引": (32, "所述电流引导层（9）的掺杂浓度大于"),
+        "外延层": (49, "所述外延层"),
+        "场效应": (16, "所述的场效应晶体管"),
+    }
 
     result = claim_model._get_terminology(claim_model.claims[11], 5)
-    assert result == {"电流引导层": (32,"所述电流引导层（9）的掺杂浓度大于"), "外延层": (49,"所述外延层"), "场效应晶体": (16,"所述的场效应晶体管")}
+    assert result == {
+        "电流引导层": (32, "所述电流引导层（9）的掺杂浓度大于"),
+        "外延层": (49, "所述外延层"),
+        "场效应晶体": (16, "所述的场效应晶体管"),
+    }
 
     result = claim_model._get_terminology(claim_model.claims[7], 3)
-    assert result["纳米线"] == (43,"所述纳米线第二掺杂类型的源区（16）")
-    
-    
+    assert result["纳米线"] == (43, "所述纳米线第二掺杂类型的源区（16）")
+
+
+@pytest.mark.parametrize(
+    "claims1, claim_num, expected, dependencies",
+    [
+        ("", 1, False, []),
+        ("", 4, False, []),
+        ("", 7, False, []),
+        ("", 10, False, []),
+        ("", 12, True, [7, 10]),
+    ],
+    indirect=["claims1"],
+)
+def test_check_multiple_dependencies(claims1, claim_num, expected, dependencies):
+    claim_model = ClaimModel(claims1)
+    claim = claim_model.claims[claim_num - 1]
+    a, b = claim_model._check_multiple_dependencies(claim)
+    assert a == expected
+    assert b == dependencies
+
+def test_check_all_multiple_dependencies(claims1):
+    claim_model = ClaimModel(claims1)
+    claim_model.check_all_multiple_dependencies()
+    assert claim_model.multiple_dependencies == {12: [7, 10]}
+
+def test_check_all_alternative_dependencies(claims1):
+    claim_model = ClaimModel(claims1)
+    assert claim_model.check_all_alternative_reference() == [10]
+
+@pytest.mark.parametrize("tmp_claim, expected", [
+    ("1. 一种装置，其包括A。\n2. 如权利要求1所述的装置，其包括B。\n3. 如权利要求2所述的装置，其包括C。\n4. 一种方法，其包括D。", [1, 4]),
+    ("1. 一种晶体管，其包括A。\n2. 如权利要求1所述的晶体管，其包括B。\n3. 如权利要求2所述的晶体管，其包括C。", [])
+])
+def test_check_all_title_domain(tmp_claim, expected):
+    claim_model = ClaimModel(tmp_claim)
+    assert claim_model.check_all_title_domain() == expected

@@ -62,6 +62,7 @@ class Window(QMainWindow, Ui_mainWindow):
 
         self._apply_style_sheet()
 
+    #--------------------- 显示引用缺陷检查结果 ------------------------
     def display_reference_basis(self, ref_basis: dict[int, dict[int, RefBasis]]):
         n = 0
         for claim_number, bases in ref_basis.items():
@@ -80,8 +81,8 @@ class Window(QMainWindow, Ui_mainWindow):
                     )
                     self.resultText.format_text(start_pos, end_pos, background=None)
                     n += 1
-                elif (
-                    basis.hasbasis_confirmed is None and isinstance(basis.hasbasis_checked, list)
+                elif basis.hasbasis_confirmed is None and isinstance(
+                    basis.hasbasis_checked, list
                 ):
                     start_pos, end_pos = self._format_ref_basis(
                         n + 1, claim_number, basis
@@ -132,6 +133,33 @@ class Window(QMainWindow, Ui_mainWindow):
 
         return start_pos, end_pos
 
+    # -------------------- 显示多引多缺陷检查结果 --------------------------------
+    def display_multiple_dependencies(self, multi_deps: dict[int, list[int]]) -> None:
+        n = 0
+        start_pos, end_pos = self.resultText.add_text("☛ 多引多缺陷\n", bold=True, underline=True)
+        self.resultText.format_text(start_pos, end_pos, background="white")
+        
+        for claim_num, deps in multi_deps.items():
+            start_pos, end_pos = self._format_multiple_deps(n+1, claim_num, deps)
+            self.resultText.format_text(start_pos, end_pos, background="white")
+            n += 1
+
+    def _format_multiple_deps(self, number: int, claim_num: int, deps: list[int]) -> tuple[int, int]:
+        deps_str = ', '.join(str(i) for i in deps)
+        
+        start_pos, _ = self.resultText.add_text(f"{number}、权利要求{claim_num}引用权项")
+        self.resultText.add_text(f"{deps_str}", bold=True)
+        _, end_pos = self.resultText.add_text("时存在多引多的缺陷\n")
+
+        data = {
+            "type": "multiple dependencies",
+            "data": [claim_num, deps],
+            "position": (start_pos, end_pos),
+        }
+        self.resultText.add_clickable_position(start_pos, end_pos, data)
+
+        return start_pos, end_pos
+
     def _add_widgets_for_toolbar(self) -> None:
         self.segmentCheckBox = QCheckBox("分词模式", parent=self.widgetToolBar)
         label = QLabel("最短截词长度:", parent=self.widgetToolBar)
@@ -165,6 +193,7 @@ class Window(QMainWindow, Ui_mainWindow):
         self.widgetToolBar.addWidget(spacer1)
         self.widgetToolBar.addWidget(self.clearButton)
 
+    #------------------------- 一些槽函数 --------------------------------
     def _connectSignalsAndSlots(self):
         self.aboutAction.triggered.connect(self._showAboutDialog)
         self.cmpAction.triggered.connect(self._showCmpWidget)
@@ -223,6 +252,7 @@ class Window(QMainWindow, Ui_mainWindow):
         ]:
             self.focusWidget().paste()  # type: ignore
 
+    #------------------------ 一些格式化函数 --------------------------
     def _apply_style_sheet(self):
         self.setStyleSheet(f"""
             QTextEdit {{
@@ -250,11 +280,10 @@ class Window(QMainWindow, Ui_mainWindow):
         cursor.clearSelection()
 
         widget.setTextCursor(cursor)  # 重置光标
-        
 
     def clear_widget_formatting(self, widget: QTextEdit):
         widget.setExtraSelections([])
-        
+
         text = widget.toPlainText()
 
         new_doc = QTextDocument()
@@ -262,7 +291,7 @@ class Window(QMainWindow, Ui_mainWindow):
         font = QFont()
         font.setPointSize(DEFAULT_FONT_SIZE)
         new_doc.setDefaultFont(font)
-        
+
         new_doc.setPlainText(text)
 
         widget.setDocument(new_doc)
@@ -302,8 +331,6 @@ class Window(QMainWindow, Ui_mainWindow):
 
         if background is not None:
             char_format.setBackground(QColor(background))
-        else:
-            char_format.setBackground(QColor("white"))
 
         if foreground or background or italic or underline or strikethrough:
             extra_selection = QTextBrowser.ExtraSelection()
@@ -312,7 +339,7 @@ class Window(QMainWindow, Ui_mainWindow):
 
             existing_selection = widget.extraSelections()
             existing_selection.append(extra_selection)
-            
+
             widget.setExtraSelections(existing_selection)
 
         if bold:

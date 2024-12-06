@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import QApplication, QTextBrowser, QTextEdit
-from PyQt5.QtGui import QTextCursor, QTextBlockFormat, QTextCharFormat, QColor, QFont
+from PyQt5.QtGui import QTextCursor
 
 from typing import Any, TypeAlias, Literal, Callable
 
-from .UI import Window, MyHighlighter
+from .UI import Window
 from .models import CmpModel, ClaimModel
 
 ClickType: TypeAlias = Literal["<left>", "<double-L>", "right"]
@@ -65,10 +65,15 @@ class App(QApplication):
 
         self.check_claim_ref_basis()
 
+        self.check_claim_multiple_dependencies()
+
     def check_claim_ref_basis(self) -> None:
         if not self.window.segmentCheckBox.isChecked():
             length = self.window.lengthSpinBox.value()
             self.claim_model.check_all_reference_basis(length)
+
+    def check_claim_multiple_dependencies(self) -> None:
+        self.claim_model.check_all_multiple_dependencies()
 
     def display_check_result(self) -> None:
         self.window.resultText.clear()
@@ -87,6 +92,9 @@ class App(QApplication):
 
             self.window.display_reference_basis(self.claim_model.reference_basis)
 
+            if self.claim_model.multiple_dependencies is not None:
+                self.window.display_multiple_dependencies(self.claim_model.multiple_dependencies)
+
         self.window.set_line_spacing(self.window.resultText, 1.5)
         self.window.resultText.moveCursor(QTextCursor.Start)
 
@@ -104,7 +112,17 @@ class App(QApplication):
         elif data["type"] == "reference basis":
             position = data["data"].position
             self.window.view_cursor_at_position(self.window.claimText, position)
-            print(data["data"])
+        elif data["type"] == "multiple dependencies":
+            claim_num = data["data"][0]
+            claim_position = self.claim_model.claims[claim_num - 1].start_pos
+            self.window.view_cursor_at_position(self.window.claimText, claim_position)
+            self.format_text(
+                self.window.claimText,
+                self.window.format_widget_text,
+                start_pos=claim_position,
+                end_pos=claim_position + len(str(claim_num))+1,
+                background="yellow",
+            )
 
     def handle_double_click(self, data):
         # TODO
@@ -133,7 +151,7 @@ class App(QApplication):
                     background=GREEN,
                 )
             else:
-                self.window.resultText.format_text(start_pos, end_pos, background=None)
+                self.window.resultText.format_text(start_pos, end_pos, background="white")
                 self.claim_model.reference_basis[claim_number][
                     key
                 ].hasbasis_confirmed = None
@@ -143,7 +161,7 @@ class App(QApplication):
                     self.window.format_widget_text,
                     start_pos=claim_position,
                     end_pos=claim_position + len(claim_pre),
-                    background=None,
+                    background="white",
                 )
 
     def handle_right_click(self, data):
@@ -173,7 +191,7 @@ class App(QApplication):
                     background=PINK,
                 )
             else:
-                self.window.resultText.format_text(start_pos, end_pos, background=None)
+                self.window.resultText.format_text(start_pos, end_pos, background="white")
                 self.claim_model.reference_basis[claim_number][
                     key
                 ].hasbasis_confirmed = None
@@ -183,7 +201,7 @@ class App(QApplication):
                     self.window.format_widget_text,
                     start_pos=claim_position,
                     end_pos=claim_position + len(claim_pre),
-                    background=None,
+                    background="white",
                 )
 
     def open_ref_dialog(self, data):
@@ -207,12 +225,12 @@ class App(QApplication):
         self.window.cmpWidget.format_text(cmp_result)
 
     def format_text(
-        self, widget: QTextEdit | QTextBrowser, fun: Callable, *args, **kwargs
+        self, widget: QTextEdit | QTextBrowser, fun: Callable, **kwargs
     ):
         if isinstance(widget, QTextEdit):
             widget.textChanged.disconnect(self.reset_claim_model)
 
-        fun(widget=widget, *args, **kwargs)
+        fun(widget=widget, **kwargs)
 
         if isinstance(widget, QTextEdit):
             widget.textChanged.connect(self.reset_claim_model)
