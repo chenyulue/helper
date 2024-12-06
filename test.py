@@ -1,86 +1,58 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QVBoxLayout, QWidget, QPushButton, QLabel
-from PyQt5.QtGui import QKeyEvent, QDropEvent, QTextCursor, QTextCharFormat, QClipboard,QMimeData
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QTextEdit, QTextBrowser
+from PyQt5.uic import loadUi
+from pathlib import Path
 
-class CustomTextEdit(QTextEdit):
-    contentChanged = pyqtSignal()
+# 假设你有一个名为 Ui_mainWindow 的 UI 类
+class Ui_mainWindow:
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(800, 600)
+        self.centralwidget = QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.setCentralWidget(self.centralwidget)
 
+        # 示例 QTextEdit 和 QTextBrowser
+        self.textEdit = QTextEdit(self.centralwidget)
+        self.textEdit.setGeometry(10, 10, 780, 290)
+        self.textEdit.setObjectName("textEdit")
+
+        self.textBrowser = QTextBrowser(self.centralwidget)
+        self.textBrowser.setGeometry(10, 310, 780, 280)
+        self.textBrowser.setObjectName("textBrowser")
+
+class Window(QMainWindow, Ui_mainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._previous_content = self.toPlainText()
+        self.setupUi(self)
 
-    def keyPressEvent(self, event: QKeyEvent):
-        super().keyPressEvent(event)
-        current_content = self.toPlainText()
-        if current_content != self._previous_content:
-            self._previous_content = current_content
-            self.contentChanged.emit()
+        # 假设有其他对话框和小部件
+        # self.aboutDialog = AboutDialog(self)
+        # self.searchDialog = SearchDialog(self)
+        # self.refDialog = RefDialog(self)
+        # self.cmpWidget = CmpWidget()
 
-    def insertFromMimeData(self, source: QMimeData):
-        super().insertFromMimeData(source)
-        current_content = self.toPlainText()
-        if current_content != self._previous_content:
-            self._previous_content = current_content
-            self.contentChanged.emit()
+        self._add_widgets_for_toolbar()
+        self._init_format()
 
-    def paste(self):
-        clipboard = QApplication.clipboard()
-        mime_data = clipboard.mimeData()
-        if mime_data.hasText():
-            self.insertPlainText(mime_data.text())
-            current_content = self.toPlainText()
-            if current_content != self._previous_content:
-                self._previous_content = current_content
-                self.contentChanged.emit()
+    def _add_widgets_for_toolbar(self):
+        # 添加工具栏小部件的逻辑
+        pass
 
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-
-        self.setWindowTitle("QTextEdit Content Changed Signal Example")
-        self.setGeometry(100, 100, 800, 600)
-
-        # 创建自定义的 QTextEdit 实例
-        self.text_edit = CustomTextEdit()
-
-        # 连接自定义的 contentChanged 信号
-        self.text_edit.contentChanged.connect(self.on_content_changed)
-
-        # 标签用于显示信号触发情况
-        self.content_changed_label = QLabel("contentChanged: Not triggered yet")
-
-        # 按钮用于改变文本格式
-        self.format_button = QPushButton("Change Text Format")
-        self.format_button.clicked.connect(self.change_text_format)
-
-        # 设置布局并将控件添加到主窗口
-        layout = QVBoxLayout()
-        layout.addWidget(self.text_edit)
-        layout.addWidget(self.content_changed_label)
-        layout.addWidget(self.format_button)
-
-        container = QWidget()
-        container.setLayout(layout)
-        self.setCentralWidget(container)
-
-    def on_content_changed(self):
-        self.content_changed_label.setText("contentChanged: Triggered")
-
-    def change_text_format(self):
-        cursor = self.text_edit.textCursor()
-        char_format = QTextCharFormat()
-        char_format.setForeground(Qt.red)  # 改变文本颜色为红色
-        cursor.mergeCharFormat(char_format)
-        self.text_edit.setTextCursor(cursor)
+    def _init_format(self):
+        self.setStyleSheet("""
+            QTextEdit {
+                font-size: 24px;
+            }
+            QTextBrowser {
+                font-size: 14px;
+            }
+        """)
 
 if __name__ == "__main__":
-    import sys
-    from PyQt5.QtCore import Qt
-
-    app = QApplication(sys.argv)
-    window = MainWindow()
+    app = QApplication([])
+    window = Window()
     window.show()
-    sys.exit(app.exec_())
+    app.exec_()
 
 
 

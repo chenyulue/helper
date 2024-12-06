@@ -1,10 +1,19 @@
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QTextBrowser, QWidget
-from PyQt5.QtGui import QFont, QSyntaxHighlighter, QTextCharFormat, QTextCursor, QColor
+from PyQt5.QtGui import (
+    QFont,
+    QSyntaxHighlighter,
+    QTextCharFormat,
+    QTextCursor,
+    QColor,
+    QTextDocument,
+)
 
 import bisect
 import re
 from typing import Any
+
+DEFAULT_FONT_SIZE = 12
 
 
 class CustomTextBrowser(QTextBrowser):
@@ -13,6 +22,7 @@ class CustomTextBrowser(QTextBrowser):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        
         self.clickable_text = {}  # 记录信号传递的数据
         self.text_positions = []  # 记录文本位置及相关数据
         self.setTextInteractionFlags(Qt.NoTextInteraction)
@@ -45,6 +55,10 @@ class CustomTextBrowser(QTextBrowser):
             char_format.setForeground(QColor(foreground))
         if background is not None:
             char_format.setBackground(QColor(background))
+
+        font = QFont()
+        font.setPointSize(DEFAULT_FONT_SIZE)
+        char_format.setFont(font, QTextCharFormat.FontPropertiesSpecifiedOnly)
 
         cursor.insertText(text, char_format)
 
@@ -146,7 +160,7 @@ class MyHighlighter(QSyntaxHighlighter):
     def __init__(
         self,
         parent: QWidget,
-        pattern: str|None = None,
+        pattern: str | None = None,
         *,
         foreground: str | None = None,
         background: str | None = None,
@@ -181,7 +195,7 @@ class MyHighlighter(QSyntaxHighlighter):
         if self._background is not None:
             char_format.setBackground(QColor(self._background))
 
-        regex = re.compile(self._pattern, re.IGNORECASE|re.MULTILINE)
+        regex = re.compile(self._pattern, re.IGNORECASE | re.MULTILINE)
         result = regex.search(block, 0)
         while result:
             self.setFormat(result.start(), result.end() - result.start(), char_format)

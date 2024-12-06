@@ -1,4 +1,5 @@
 from collections.abc import Iterator
+import re
 
 from PyQt5.QtWidgets import (
     QDialog,
@@ -15,6 +16,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import (
     QTextCursor,
     QTextCharFormat,
+    QTextBlockFormat,
     QTextDocument,
     QColor,
     QFont,
@@ -38,6 +40,7 @@ RED = "red"
 BLUE = "blue"
 PINK = "pink"
 GREEN = "#95FA9B"
+DEFAULT_FONT_SIZE = 12
 
 
 class Window(QMainWindow, Ui_mainWindow):
@@ -45,6 +48,8 @@ class Window(QMainWindow, Ui_mainWindow):
         super().__init__(parent)
         # loadUi(UI_PATH / "mainWindow.ui", self)
         self.setupUi(self)
+
+        self.resize(1000, 618)
 
         self.aboutDialog = AboutDialog(self)
         self.searchDialog = SearchDialog(self)
@@ -55,34 +60,66 @@ class Window(QMainWindow, Ui_mainWindow):
 
         self._connectSignalsAndSlots()
 
+        self._apply_style_sheet()
+
     def display_reference_basis(self, ref_basis: dict[int, dict[int, RefBasis]]):
         n = 0
         for claim_number, bases in ref_basis.items():
             for position, basis in bases.items():
                 if basis.hasbasis_confirmed is False:
-                    start_pos, end_pos = self._format_ref_basis(n + 1, claim_number, basis)
+                    start_pos, end_pos = self._format_ref_basis(
+                        n + 1, claim_number, basis
+                    )
                     self.resultText.format_text(start_pos, end_pos, background=PINK)
                     n += 1
                 elif (
                     basis.hasbasis_confirmed is None and basis.hasbasis_checked is False
                 ):
-                    start_pos, end_pos = self._format_ref_basis(n + 1, claim_number, basis)
+                    start_pos, end_pos = self._format_ref_basis(
+                        n + 1, claim_number, basis
+                    )
                     self.resultText.format_text(start_pos, end_pos, background=None)
                     n += 1
-                elif self.showAllCheckBox.isChecked() and basis.hasbasis_confirmed is True:
-                    start_pos, end_pos = self._format_ref_basis(n + 1, claim_number, basis)
+                elif (
+                    basis.hasbasis_confirmed is None and isinstance(basis.hasbasis_checked, list)
+                ):
+                    start_pos, end_pos = self._format_ref_basis(
+                        n + 1, claim_number, basis
+                    )
+                    self.resultText.format_text(start_pos, end_pos, background=None)
+                    n += 1
+                elif (
+                    self.showAllCheckBox.isChecked()
+                    and basis.hasbasis_confirmed is True
+                ):
+                    start_pos, end_pos = self._format_ref_basis(
+                        n + 1, claim_number, basis
+                    )
                     self.resultText.format_text(start_pos, end_pos, background=GREEN)
                     n += 1
 
-    def _format_ref_basis(self, number: int, claim_number: int, basis: RefBasis) -> tuple[int, int]:
-        pre, post = basis.context.split(basis.term)
+    def _format_ref_basis(
+        self, number: int, claim_number: int, basis: RefBasis
+    ) -> tuple[int, int]:
+        if basis.term in basis.context:
+            pre, post = basis.context.split(basis.term)
+        else:
+            pre, post = basis.context.split(basis.term[0])
+            post = ""
 
         start_pos, _ = self.resultText.add_text(
             f"{number}、权利要求{claim_number}中“{pre}"
         )
         self.resultText.add_text(basis.term, foreground=RED, underline=True)
+
+        if basis.hasbasis_confirmed is True:
+            expr = "没有"
+        elif basis.hasbasis_checked is False:
+            expr = "存在"
+        else:
+            expr = f"在引用路径不包括{', '.join(str(i) for i in basis.hasbasis_checked)}时存在"
         _, end_pos = self.resultText.add_text(
-            f"{post}”{'有' if basis.hasbasis_confirmed is not True else '没有'}缺乏引用基础的表述 ({basis.position})\n"
+            f"{post}”{expr}缺乏引用基础的表述 ({basis.position})\n"
         )
 
         data = {
@@ -106,6 +143,7 @@ class Window(QMainWindow, Ui_mainWindow):
         self.clearButton.setStyleSheet("font-weight: bold;")
 
         self.lengthSpinBox.setRange(1, 20)
+        self.lengthSpinBox.setValue(2)
         self.lengthSpinBox.lineEdit().setReadOnly(True)  # type: ignore
 
         spacer = QWidget()
@@ -184,6 +222,119 @@ class Window(QMainWindow, Ui_mainWindow):
             self.abstractText,
         ]:
             self.focusWidget().paste()  # type: ignore
+
+    def _apply_style_sheet(self):
+        self.setStyleSheet(f"""
+            QTextEdit {{
+                font-size: {DEFAULT_FONT_SIZE}pt;
+            }}
+            QTextBrowser {{
+                font-size: {DEFAULT_FONT_SIZE}pt;
+            }}
+        """)
+
+    def set_line_spacing(
+        self, widget: QTextEdit | QTextBrowser, line_spacing: int | float
+    ) -> None:
+        cursor = widget.textCursor()  # 获取光标
+        cursor.select(QTextCursor.Document)  # 选择整个文档
+
+        # 设置段落格式
+        block_format = QTextBlockFormat()
+        block_format.setLineHeight(
+            line_spacing * 100, QTextBlockFormat.ProportionalHeight
+        )
+
+        # 应用到文档
+        cursor.mergeBlockFormat(block_format)
+        cursor.clearSelection()
+
+        widget.setTextCursor(cursor)  # 重置光标
+        
+
+    def clear_widget_formatting(self, widget: QTextEdit):
+        widget.setExtraSelections([])
+        
+        text = widget.toPlainText()
+
+        new_doc = QTextDocument()
+
+        font = QFont()
+        font.setPointSize(DEFAULT_FONT_SIZE)
+        new_doc.setDefaultFont(font)
+        
+        new_doc.setPlainText(text)
+
+        widget.setDocument(new_doc)
+
+        widget.moveCursor(QTextCursor.Start)
+
+    def format_widget_text(
+        self,
+        widget: QTextEdit,
+        start_pos: int,
+        end_pos: int,
+        *,
+        foreground: str | None = None,
+        background: str | None = None,
+        bold: bool = False,
+        italic: bool = False,
+        underline: bool = False,
+        strikethrough: bool = False,
+    ):
+        cursor = widget.textCursor()
+        cursor.setPosition(start_pos)
+        cursor.setPosition(end_pos, QTextCursor.KeepAnchor)
+
+        char_format = QTextCharFormat()
+        char_format.setFontUnderline(underline)
+        char_format.setFontItalic(italic)
+        char_format.setFontStrikeOut(strikethrough)
+
+        if bold:
+            font = QFont()
+            font.setBold(True)
+            font.setPointSize(14)
+            char_format.setFont(font)
+
+        if foreground is not None:
+            char_format.setForeground(QColor(foreground))
+
+        if background is not None:
+            char_format.setBackground(QColor(background))
+        else:
+            char_format.setBackground(QColor("white"))
+
+        if foreground or background or italic or underline or strikethrough:
+            extra_selection = QTextBrowser.ExtraSelection()
+            extra_selection.cursor = cursor
+            extra_selection.format = char_format
+
+            existing_selection = widget.extraSelections()
+            existing_selection.append(extra_selection)
+            
+            widget.setExtraSelections(existing_selection)
+
+        if bold:
+            cursor.mergeCharFormat(char_format)
+
+    def format_widget_with_pattern(
+        self, widget: QTextEdit | QTextBrowser, pattern: str, *args, **kwargs
+    ):
+        regex = re.compile(pattern, re.IGNORECASE | re.MULTILINE)
+        block = widget.toPlainText()
+
+        result = regex.search(block, 0)
+        while result:
+            self.format_widget_text(
+                widget, result.start(), result.end(), *args, **kwargs
+            )
+            result = regex.search(block, result.end())
+
+    def view_cursor_at_position(self, widget: QTextEdit, position: int):
+        cursor = QTextCursor(widget.document())
+        cursor.setPosition(position)
+        widget.setTextCursor(cursor)
 
 
 class CmpWidget(QWidget, Ui_cmpWidget):

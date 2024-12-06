@@ -130,33 +130,27 @@ class ClaimModel:
     def get_all_reference_paths(self) -> dict[int, list[int]]:
         """获取所有权利要求的引用路径"""
         for i, claim in enumerate(self.claims):
-            paths = self._flatten_paths(
-                self._get_reference_path(i + 1, self.claims)
-            )
-            self.reference_path[i+1] = paths[1:]
+            paths = self._flatten_paths(self._get_reference_path(i + 1, self.claims))
+            self.reference_path[i + 1] = paths[1:]
         return self.reference_path
 
     def _check_reference_basis(self, claim: Claim, length: int) -> None:
         for term, position in self._get_terminology(claim, length).items():
             pos = claim.start_pos + position[0]
+            result = self._reference_has_basis(claim, term, position[0], self.claims)
             if self.reference_basis.get(claim.number) is None:
-                result = self._reference_has_basis(
-                    claim, term, position[0], self.claims
-                )
                 self.reference_basis[claim.number] = {
                     pos: RefBasis(pos, term, position[1], None, result)
                 }
             elif self.reference_basis[claim.number].get(pos) is None:
-                result = self._reference_has_basis(
-                    claim, term, position[0], self.claims
-                )
                 self.reference_basis[claim.number].update(
                     {pos: RefBasis(pos, term, position[1], None, result)}
                 )
             elif self.reference_basis[claim.number].get(pos).hasbasis_confirmed is None:
-                result = self._reference_has_basis(
-                    claim, term, position[0], self.claims
+                self.reference_basis[claim.number].update(
+                    {pos: RefBasis(pos, term, position[1], None, result)}
                 )
+            elif self.reference_basis[claim.number].get(pos).hasbasis_checked != result:
                 self.reference_basis[claim.number].update(
                     {pos: RefBasis(pos, term, position[1], None, result)}
                 )
@@ -202,14 +196,14 @@ class ClaimModel:
         for ref_number in self._flatten_paths(ref_paths)[1:]:
             ref_claim = self.claims[ref_number - 1]
             if pattern.search(ref_claim.content):
-                existed_ref = ref_number
+                # existed_ref = ref_number
 
                 # 如果所有的引用路径上都存在该术语，则直接返回True
-                if all(existed_ref in paths for paths in ref_paths):
+                if all(ref_number in paths for paths in ref_paths):
                     return True
                 # 收集存在该术语的部分引用路径
                 else:
-                    existed_refs.append(existed_ref)
+                    existed_refs.append(ref_number)
 
         # 若existed_refs为空列表，则表明所有引用路径都不存在该技术术语
         return existed_refs if existed_refs else False
