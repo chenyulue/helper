@@ -164,7 +164,7 @@ class ClaimModel:
             f"{preceding_words}"
             "([^，。；,;]{1,"
             f"{length}"
-            "}).*?(?=[，。；,;]|"
+            "}).*?(?=[，。；,;、]|"
             f"{preceding_words}"
         )
         pattern = re.compile(PATTERN)
