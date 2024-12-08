@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QTextBrowser, QTextEdit
+from PyQt5.QtWidgets import QApplication, QTextBrowser, QTextEdit, QMessageBox
 from PyQt5.QtGui import QTextCursor
 
 from typing import Any, TypeAlias, Literal, Callable
@@ -44,7 +44,7 @@ class App(QApplication):
             self.claim_model.reset_model(claims)
             self._first_check = True
         except ValueError as e:
-            print(str(e))
+            self.window._showWarningDialog(str(e))
 
     def check_defects(self) -> None:
         self.check_claim_defects()

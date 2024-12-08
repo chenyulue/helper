@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (
     QSpinBox,
     QPushButton,
     QSizePolicy,
+    QMessageBox,
 )
 from PyQt5.QtGui import (
     QTextCursor,
@@ -271,6 +272,14 @@ class Window(QMainWindow, Ui_mainWindow):
     def _showSearchDialog(self) -> None:
         self.searchDialog.show()
         self.searchDialog.searchLineEdit.setFocus()
+
+    def _showWarningDialog(self, message: str) -> None:
+        warning_box = QMessageBox(parent=self)
+        warning_box.setWindowTitle("警告")
+        warning_box.setText(message)
+        warning_box.setIcon(QMessageBox.Warning)
+        warning_box.setStandardButtons(QMessageBox.Ok)
+        warning_box.show()
 
     def _copy_text(self):
         if self.focusWidget() in [
