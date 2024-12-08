@@ -159,19 +159,49 @@ def test_check_multiple_dependencies(claims1, claim_num, expected, dependencies)
     assert a == expected
     assert b == dependencies
 
+
 def test_check_all_multiple_dependencies(claims1):
     claim_model = ClaimModel(claims1)
     claim_model.check_all_multiple_dependencies()
     assert claim_model.multiple_dependencies == {12: [7, 10]}
 
+
 def test_check_all_alternative_dependencies(claims1):
     claim_model = ClaimModel(claims1)
     assert claim_model.check_all_alternative_reference() == [10]
 
-@pytest.mark.parametrize("tmp_claim, expected", [
-    ("1. 一种装置，其包括A。\n2. 如权利要求1所述的装置，其包括B。\n3. 如权利要求2所述的装置，其包括C。\n4. 一种方法，其包括D。", [1, 4]),
-    ("1. 一种晶体管，其包括A。\n2. 如权利要求1所述的晶体管，其包括B。\n3. 如权利要求2所述的晶体管，其包括C。", [])
-])
+
+@pytest.mark.parametrize(
+    "tmp_claim, expected",
+    [
+        (
+            "1. 一种装置，其包括A。\n2. 如权利要求1所述的装置，其包括B。\n3. 如权利要求2所述的装置，其包括C。\n4. 一种方法，其包括D。",
+            [1, 4],
+        ),
+        (
+            "1. 一种晶体管，其包括A。\n2. 如权利要求1所述的晶体管，其包括B。\n3. 如权利要求2所述的晶体管，其包括C。",
+            [],
+        ),
+    ],
+)
 def test_check_all_title_domain(tmp_claim, expected):
     claim_model = ClaimModel(tmp_claim)
     assert claim_model.check_all_title_domain() == expected
+
+
+@pytest.mark.parametrize(
+    "tmp_claim, expected",
+    [
+        (
+            "1. 一种装置，其包括A。\n2. 如权利要1所述的装置，其包括B。\n3. 如权利求2所述的装置，其包括C。",
+            [(2, "权利要"), (3, "权利求")],
+        ),
+        (
+            "1. 一种晶体管，其包括A。\n2. 如权要求1所述的晶体管，其包括B。\n3. 如利要求2所述的晶体管，其包括C。",
+            [(2, "权要求"), (3, "利要求")],
+        ),
+    ],
+)
+def test_check_all_claim_phrases_integrity(tmp_claim, expected):
+    claim_model = ClaimModel(tmp_claim)
+    assert claim_model.check_all_claim_phrases_integrity() == expected

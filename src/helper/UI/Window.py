@@ -22,9 +22,9 @@ from PyQt5.QtGui import (
     QFont,
 )
 from PyQt5.QtCore import Qt
-# from PyQt5.uic import loadUi
 
-from ..models import OpCode, RefBasis
+from typing import Any
+from ..models import OpCode, RefBasis, SMALL_DEFECTS
 
 from . import resources_rc  # noqa: F401
 from .Ui_MainWindow import Ui_mainWindow
@@ -32,9 +32,6 @@ from .Ui_CmpWidget import Ui_cmpWidget
 from .Ui_AboutDialog import Ui_aboutDialog
 from .Ui_SearchDialog import Ui_searchDialog
 from .Ui_RefDialog import Ui_refDialog
-
-# from ..assets import ASSETS
-# UI_PATH = ASSETS.parent / "UI"
 
 RED = "red"
 BLUE = "blue"
@@ -62,7 +59,7 @@ class Window(QMainWindow, Ui_mainWindow):
 
         self._apply_style_sheet()
 
-    #--------------------- 显示引用缺陷检查结果 ------------------------
+    # --------------------- 显示引用缺陷检查结果 ------------------------
     def display_reference_basis(self, ref_basis: dict[int, dict[int, RefBasis]]):
         n = 0
         for claim_number, bases in ref_basis.items():
@@ -136,18 +133,24 @@ class Window(QMainWindow, Ui_mainWindow):
     # -------------------- 显示多引多缺陷检查结果 --------------------------------
     def display_multiple_dependencies(self, multi_deps: dict[int, list[int]]) -> None:
         n = 0
-        start_pos, end_pos = self.resultText.add_text("☛ 多引多缺陷\n", bold=True, underline=True)
+        start_pos, end_pos = self.resultText.add_text(
+            "☛ 多引多缺陷\n", bold=True, underline=True
+        )
         self.resultText.format_text(start_pos, end_pos, background="white")
-        
+
         for claim_num, deps in multi_deps.items():
-            start_pos, end_pos = self._format_multiple_deps(n+1, claim_num, deps)
+            start_pos, end_pos = self._format_multiple_deps(n + 1, claim_num, deps)
             self.resultText.format_text(start_pos, end_pos, background="white")
             n += 1
 
-    def _format_multiple_deps(self, number: int, claim_num: int, deps: list[int]) -> tuple[int, int]:
-        deps_str = ', '.join(str(i) for i in deps)
-        
-        start_pos, _ = self.resultText.add_text(f"{number}、权利要求{claim_num}引用权项")
+    def _format_multiple_deps(
+        self, number: int, claim_num: int, deps: list[int]
+    ) -> tuple[int, int]:
+        deps_str = ", ".join(str(i) for i in deps)
+
+        start_pos, _ = self.resultText.add_text(
+            f"{number}、权利要求{claim_num}引用权项"
+        )
         self.resultText.add_text(f"{deps_str}", bold=True)
         _, end_pos = self.resultText.add_text("时存在多引多的缺陷\n")
 
@@ -160,6 +163,50 @@ class Window(QMainWindow, Ui_mainWindow):
 
         return start_pos, end_pos
 
+    # ======================= 显示其他小缺陷检查结果 =============================
+    def display_small_defects(self, defects: dict[SMALL_DEFECTS, list[Any]]) -> None:
+        if defects:
+            start_pos, end_pos = self.resultText.add_text(
+                "☛ 其他小缺陷\n", bold=True, underline=True
+            )
+            self.resultText.format_text(start_pos, end_pos, background="white")
+
+        n = 0
+        if defects.get("non_alternative_reference"):
+            self._format_non_alternative_reference(
+                n + 1, defects["non_alternative_reference"]
+            )
+            n += 1
+        if defects.get("no_title_domain"):
+            self._format_no_title_domain(n + 1, defects["no_title_domain"])
+            n += 1
+        if defects.get("claim_phrases_unintegrity"):
+            self._format_claim_phrases_unintegrity(
+                n + 1, defects["claim_phrases_unintegrity"]
+            )
+            n += 1
+
+    def _format_non_alternative_reference(self, number: int, claim_numbers: list[int]):
+        self.resultText.add_text(f"{number}、存在非择一引用缺陷的权利要求：")
+
+        for i, claim_num in enumerate(claim_numbers):
+            if i == len(claim_numbers) - 1:
+                text = f"[{claim_num}]"
+            else:
+                text = f"[{claim_num}]、"
+            data = {"type": "small defects", "data": claim_num}
+            self.resultText.add_text(text, bold=True, record_position=True, data=data)
+        self.resultText.add_text("\n")
+
+    def _format_no_title_domain(self, number: int, claim_numbers: list[int]):
+        pass
+
+    def _format_claim_phrases_unintegrity(
+        self, number: int, claim_numbers: list[tuple[int, str]]
+    ):
+        pass
+
+    # ------------------------- 添加工具栏小控件 ------------------------------------
     def _add_widgets_for_toolbar(self) -> None:
         self.segmentCheckBox = QCheckBox("分词模式", parent=self.widgetToolBar)
         label = QLabel("最短截词长度:", parent=self.widgetToolBar)
@@ -193,7 +240,7 @@ class Window(QMainWindow, Ui_mainWindow):
         self.widgetToolBar.addWidget(spacer1)
         self.widgetToolBar.addWidget(self.clearButton)
 
-    #------------------------- 一些槽函数 --------------------------------
+    # ------------------------- 一些槽函数 --------------------------------
     def _connectSignalsAndSlots(self):
         self.aboutAction.triggered.connect(self._showAboutDialog)
         self.cmpAction.triggered.connect(self._showCmpWidget)
@@ -252,7 +299,7 @@ class Window(QMainWindow, Ui_mainWindow):
         ]:
             self.focusWidget().paste()  # type: ignore
 
-    #------------------------ 一些格式化函数 --------------------------
+    # ------------------------ 一些格式化函数 --------------------------
     def _apply_style_sheet(self):
         self.setStyleSheet(f"""
             QTextEdit {{

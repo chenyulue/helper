@@ -40,9 +40,11 @@ class App(QApplication):
 
     def reset_claim_model(self):
         claims = self.window.claimText.toPlainText()
-        self.claim_model.reset_model(claims)
-
-        self._first_check = True
+        try:
+            self.claim_model.reset_model(claims)
+            self._first_check = True
+        except ValueError as e:
+            print(str(e))
 
     def check_defects(self) -> None:
         self.check_claim_defects()
@@ -67,6 +69,8 @@ class App(QApplication):
 
         self.check_claim_multiple_dependencies()
 
+        self.check_claim_small_defects()
+
     def check_claim_ref_basis(self) -> None:
         if not self.window.segmentCheckBox.isChecked():
             length = self.window.lengthSpinBox.value()
@@ -74,6 +78,9 @@ class App(QApplication):
 
     def check_claim_multiple_dependencies(self) -> None:
         self.claim_model.check_all_multiple_dependencies()
+
+    def check_claim_small_defects(self):
+        self.claim_model.check_all_alternative_reference()
 
     def display_check_result(self) -> None:
         self.window.resultText.clear()
@@ -92,8 +99,10 @@ class App(QApplication):
 
             self.window.display_reference_basis(self.claim_model.reference_basis)
 
-            if self.claim_model.multiple_dependencies is not None:
+            if self.claim_model.multiple_dependencies:
                 self.window.display_multiple_dependencies(self.claim_model.multiple_dependencies)
+            
+            self.window.display_small_defects(self.claim_model.small_defects)
 
         self.window.set_line_spacing(self.window.resultText, 1.5)
         self.window.resultText.moveCursor(QTextCursor.Start)
@@ -122,6 +131,17 @@ class App(QApplication):
                 start_pos=claim_position,
                 end_pos=claim_position + len(str(claim_num))+1,
                 background="yellow",
+            )
+        elif data["type"] == "small defects":
+            claim_num = data["data"]
+            claim_position = self.claim_model.claims[claim_num - 1].start_pos
+            self.window.view_cursor_at_position(self.window.claimText, claim_position)
+            self.format_text(
+                self.window.claimText,
+                self.window.format_widget_text,
+                start_pos=claim_position,
+                end_pos=claim_position + len(str(claim_num)) + 1,
+                background="#95F7FC"
             )
 
     def handle_double_click(self, data):

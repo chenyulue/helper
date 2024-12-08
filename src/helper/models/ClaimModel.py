@@ -1,11 +1,16 @@
 from dataclasses import dataclass
 import re
 import itertools
+from typing import Literal, TypeAlias, Any
 
 SPLIT_CLAIM = r"^(\d+)\.\s*([^，]+)，.+?(?:\n|$)(?:^[^\d\n].+?(?:\n|$))*"
-TITLE = r"(?:根据|如)权利(?:要求)?(.+?)所述的?(.+)"
+TITLE = r"(?:根据|如)权?利?要?求?(.+?)所述的?(.+)"
 
 TITLE_WITHOUT_DOMAIN = "一种装置|一种方法|一种工艺"
+
+SMALL_DEFECTS: TypeAlias = Literal[
+    "non_alternative_reference", "no_title_domain", "claim_phrases_unintegrity"
+]
 
 
 @dataclass
@@ -81,14 +86,14 @@ class ClaimModel:
         self.claims = self._parse_claims()
 
         # 缺少引用基础缺陷结果
-        self.reference_basis = {}
-        self.reference_path = {}
+        self.reference_basis: dict[int, dict[int, RefBasis]] = {}
+        self.reference_path: dict[int, list[int]] = {}
 
         # 多引多缺陷结果
-        self.multiple_dependencies = None
+        self.multiple_dependencies: dict[int, list[int]] | None = None
 
-        # 非择一引用缺陷结果
-        self.not_alternative_reference = None
+        # 非择一引用缺陷结果、主题名称为体现技术领域及“权利要求”这4个字不完整
+        self.small_defects: dict[SMALL_DEFECTS, list[Any]] = {}
 
     def reset_model(self, new_claims: str) -> None:
         """根据新的权利要求文本重置ClaimModel：重新解析权利要求，并将相关的缺陷查询结果清空
@@ -98,13 +103,7 @@ class ClaimModel:
         new_claims : str
             新的权利要求文本
         """
-        self._claims = new_claims
-        self.claims = self._parse_claims()
-
-        self.reference_basis = {}
-        self.reference_path = {}
-
-        self.multiple_dependencies = None
+        self.__init__(new_claims)
 
     # =========================== 解析权利要求 ===========================
     def _parse_claims(self) -> tuple[Claim, ...]:
@@ -202,13 +201,13 @@ class ClaimModel:
                 self.reference_basis[claim.number].update(
                     {pos: RefBasis(pos, term, position[1], None, result)}
                 )
-            elif self.reference_basis[claim.number].get(pos).hasbasis_confirmed is None:
+            elif self.reference_basis[claim.number].get(pos).hasbasis_confirmed is None:  # type: ignore
                 self.reference_basis[claim.number].update(
                     {pos: RefBasis(pos, term, position[1], None, result)}
                 )
             elif (
-                self.reference_basis[claim.number].get(pos).hasbasis_confirmed is True
-                and self.reference_basis[claim.number].get(pos).hasbasis_checked
+                self.reference_basis[claim.number].get(pos).hasbasis_confirmed is True  # type: ignore
+                and self.reference_basis[claim.number].get(pos).hasbasis_checked  # type: ignore
                 != result
             ):
                 self.reference_basis[claim.number].update(
@@ -322,7 +321,13 @@ class ClaimModel:
         list[int]
             存在非择一引用缺陷的所有权利要求编号
         """
-        return [claim.number for claim in self.claims if claim.is_alternative is False]
+        if self.small_defects.get("non_alternative_reference") is None:
+            result = [
+                claim.number for claim in self.claims if claim.is_alternative is False
+            ]
+            if result:
+                self.small_defects["non_alternative_reference"] = result
+        return self.small_defects.get("non_alternative_reference", [])
 
     # ======================= 检查主题名称未体现技术领域 =======================
     def check_all_title_domain(self) -> list[int]:
@@ -333,11 +338,44 @@ class ClaimModel:
         list[int]
             存在技术主题名称未体现技术领域缺陷的权利要求编号
         """
-        return [
-            claim.number
-            for claim in self.claims
-            if (
-                claim.is_dependent is False
-                and re.match(TITLE_WITHOUT_DOMAIN, claim.title) is not None
-            )
-        ]
+        if self.small_defects.get("no_title_domain") is None:
+            result = [
+                claim.number
+                for claim in self.claims
+                if (
+                    claim.is_dependent is False
+                    and re.match(TITLE_WITHOUT_DOMAIN, claim.title) is not None
+                )
+            ]
+            if result:
+                self.small_defects["no_title_domain"] = result
+        return self.small_defects.get("no_title_domain", [])
+
+    # ================ 检查权利要求主题文本中“权利要求”4个字是否完整 ================
+    def check_all_claim_phrases_integrity(self) -> list[tuple[int, str]]:
+        """检查权利要求主题文本中“权利要求”这4个字是否完整
+
+        Returns
+        -------
+        list[tuple[int, str]]
+            “权利要求”这4个字不完整的的权利要求编号及相应不完整的表述
+        """
+        if self.small_defects.get("claim_phrases_unintegrity") is None:
+            pattern = r"(?:根据|如)(权?)(利?)(要?)(求?)\d+.*?所述"
+            regex = re.compile(pattern)
+
+            result = []
+            for claim in self.claims:
+                m = regex.search(claim.content)
+                if m is not None and (phrase := "".join(m.groups())) != "权利要求":
+                    result.append((claim.number, phrase))
+            if result:
+                self.small_defects["claim_phrases_unintegrity"] = result
+        return self.small_defects.get("claim_phrases_unintegrity", [])
+
+    # ======================= 检查权利要求中涉嫌不清楚以及敏感的词 =======================
+    def check_all_indefinite_expression(self) -> None:
+        pass
+
+    def check_all_sensitive_expressioin(self) -> None:
+        pass
