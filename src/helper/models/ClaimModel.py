@@ -65,8 +65,6 @@ class RefBasis:
         缺乏引用基础的相关特征术语，即“所述”之后的特征
     context: str
         缺乏引用基础的相关特征的上下文文本，从该“所述”等引用词开始直至下一个标点符号或者下一个“所述”等引用词的文本范围
-    hasbasis_confirmed: bool | None
-        手动确认的缺乏引用基础问题的结果，未确认则为None，有引用基础则为True，没有引用基础则为False
     hasbasis_checked: bool | list[int]
         程序检查的缺乏引用基础问题的结果，所有引用路径都有引用基础则为True，所有引用路径都没有引用基础则为False，
         部分引用路径有引用基础则记录这些引用引用基础的部分引用路径。
@@ -79,6 +77,15 @@ class RefBasis:
     hasbasis_checked: bool | list[int]
 
 
+class RefBasisConfirmed:
+    def __init__(self, has_basis: set[int]=set(), lack_basis: set[int]=set()):
+        self.has_basis = set()
+        self.lack_basis = set()
+
+    def __str__(self):
+        return f"has basis: {self.has_basis}, lack basis: {self.lack_basis}"
+
+
 class ClaimModel:
     def __init__(self, claims: str):
         self._claims = claims
@@ -87,6 +94,7 @@ class ClaimModel:
 
         # 缺少引用基础缺陷结果
         self.reference_basis: dict[int, dict[int, RefBasis]] = {}
+        self.reference_basis_confirmed = RefBasisConfirmed()
         self.reference_path: dict[int, list[int]] = {}
 
         # 多引多缺陷结果
@@ -104,6 +112,9 @@ class ClaimModel:
             新的权利要求文本
         """
         self.__init__(new_claims)
+
+    def clear_reference_basis(self):
+        self.reference_basis = {}
 
     # =========================== 解析权利要求 ===========================
     def _parse_claims(self) -> tuple[Claim, ...]:
@@ -150,6 +161,10 @@ class ClaimModel:
         OR_PATTERN = r"(?:\d+[、，或])*\d+或\d+"
         AND_PATTERN = r"((?:\d+[、，和及])*\d+[和及]\d+).*?(任意?一)?.*"
         RANGE_PATTERN = r"(\d+)\s*[-~至到]\s*(\d+).*?(任意?一)?.*"
+
+        if deps is not None:
+            deps = deps.strip()
+
         if deps is None:
             return [], None
         elif deps.isdigit():
@@ -165,7 +180,9 @@ class ClaimModel:
                 range(int(match.group(1)), int(match.group(2)) + 1)
             ), match.group(3) is not None
         else:
-            raise ValueError(f"权利要求引用撰写方式:`{deps}`未被处理, 请反馈Bug")
+            raise ValueError(
+                f"权项编号引用撰写方式: “<b>{deps}</b>” 未被处理, <br>未能正确解析权利要求请反馈Bug"
+            )
 
     # ============================ 检查引用基础的缺陷 =======================
     def check_all_reference_basis(self, length: int) -> None:
@@ -197,34 +214,20 @@ class ClaimModel:
                 self.reference_basis[claim.number] = {
                     pos: RefBasis(pos, term, position[1], None, result)
                 }
-            elif self.reference_basis[claim.number].get(pos) is None:
-                self.reference_basis[claim.number].update(
-                    {pos: RefBasis(pos, term, position[1], None, result)}
-                )
-            elif self.reference_basis[claim.number].get(pos).hasbasis_confirmed is None:  # type: ignore
-                self.reference_basis[claim.number].update(
-                    {pos: RefBasis(pos, term, position[1], None, result)}
-                )
-            elif (
-                self.reference_basis[claim.number].get(pos).hasbasis_confirmed is True  # type: ignore
-                and self.reference_basis[claim.number].get(pos).hasbasis_checked  # type: ignore
-                != result
-            ):
-                self.reference_basis[claim.number].update(
-                    {pos: RefBasis(pos, term, position[1], None, result)}
-                )
             else:
-                self.reference_basis[claim.number][pos].term = term
+                self.reference_basis[claim.number].update(
+                    {pos: RefBasis(pos, term, position[1], None, result)}
+                )
 
     def _get_terminology(self, claim: Claim, length: int) -> dict[str, tuple[int, str]]:
-        preceding_words = "所述的?|上述的?|前述的?|该些?)"
+        preceding_words = "所述的?|上述的?|前述的?|该些?"
         PATTERN = (
             "(?:"
-            f"{preceding_words}"
+            f"{preceding_words})"
             "([^，。；,;]{1,"
             f"{length}"
             "}).*?(?=[，。；,;、]|"
-            f"{preceding_words}"
+            f"{preceding_words})"
         )
         pattern = re.compile(PATTERN)
 

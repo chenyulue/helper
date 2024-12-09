@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QTextBrowser, QTextEdit, QMessageBox
+from PyQt5.QtWidgets import QApplication, QTextBrowser, QTextEdit
 from PyQt5.QtGui import QTextCursor
 
 from typing import Any, TypeAlias, Literal, Callable
@@ -36,20 +36,27 @@ class App(QApplication):
 
         self.window.resultText.textClicked.connect(self.on_text_clicked)
 
-        self.window.claimText.textChanged.connect(self.reset_claim_model)
+        self.window.claimText.textChanged.connect(self._resume_first_check)
+
+    def _resume_first_check(self):
+        self._first_check = True
 
     def reset_claim_model(self):
         claims = self.window.claimText.toPlainText()
         try:
             self.claim_model.reset_model(claims)
-            self._first_check = True
         except ValueError as e:
             self.window._showWarningDialog(str(e))
 
     def check_defects(self) -> None:
+        if self._first_check:
+            self.reset_claim_model()
+
         self.check_claim_defects()
 
         self.display_check_result()
+
+        self._first_check = False
 
     def check_claim_defects(self) -> None:
         # 如果是第一次检查，格式化相关文本
@@ -63,7 +70,8 @@ class App(QApplication):
                 pattern=r"^[0-9]{1,3}\.",
                 bold=True,
             )
-        self._first_check = False
+
+        self.claim_model.clear_reference_basis()
 
         self.check_claim_ref_basis()
 
@@ -81,6 +89,8 @@ class App(QApplication):
 
     def check_claim_small_defects(self):
         self.claim_model.check_all_alternative_reference()
+        self.claim_model.check_all_title_domain()
+        self.claim_model.check_all_claim_phrases_integrity()
 
     def display_check_result(self) -> None:
         self.window.resultText.clear()
@@ -97,11 +107,16 @@ class App(QApplication):
                 data={"type": "open ref_dialog", "data": ref_paths},
             )
 
-            self.window.display_reference_basis(self.claim_model.reference_basis)
+            self.window.display_reference_basis(
+                self.claim_model.reference_basis,
+                self.claim_model.reference_basis_confirmed,
+            )
 
             if self.claim_model.multiple_dependencies:
-                self.window.display_multiple_dependencies(self.claim_model.multiple_dependencies)
-            
+                self.window.display_multiple_dependencies(
+                    self.claim_model.multiple_dependencies
+                )
+
             self.window.display_small_defects(self.claim_model.small_defects)
 
         self.window.set_line_spacing(self.window.resultText, 1.5)
@@ -121,6 +136,7 @@ class App(QApplication):
         elif data["type"] == "reference basis":
             position = data["data"].position
             self.window.view_cursor_at_position(self.window.claimText, position)
+            # print(self.claim_model.reference_basis_confirmed, "\n", data["data"])
         elif data["type"] == "multiple dependencies":
             claim_num = data["data"][0]
             claim_position = self.claim_model.claims[claim_num - 1].start_pos
@@ -129,7 +145,7 @@ class App(QApplication):
                 self.window.claimText,
                 self.window.format_widget_text,
                 start_pos=claim_position,
-                end_pos=claim_position + len(str(claim_num))+1,
+                end_pos=claim_position + len(str(claim_num)) + 1,
                 background="yellow",
             )
         elif data["type"] == "small defects":
@@ -141,7 +157,7 @@ class App(QApplication):
                 self.window.format_widget_text,
                 start_pos=claim_position,
                 end_pos=claim_position + len(str(claim_num)) + 1,
-                background="#95F7FC"
+                background="#95F7FC",
             )
 
     def handle_double_click(self, data):
@@ -149,19 +165,16 @@ class App(QApplication):
         if data["type"] == "reference basis":
             start_pos, end_pos = data["position"]
             key = data["data"].position
-            claim_number = data["claim_num"]
 
             claim_position = data["data"].position
             claim_term = data["data"].term
             claim_pre, _ = data["data"].context.split(claim_term)
-            if (
-                self.claim_model.reference_basis[claim_number][key].hasbasis_confirmed
-                is not True
-            ):
+            if key not in self.claim_model.reference_basis_confirmed.has_basis:
+                self.claim_model.reference_basis_confirmed.has_basis.add(key)
+                if key in self.claim_model.reference_basis_confirmed.lack_basis:
+                    self.claim_model.reference_basis_confirmed.lack_basis.remove(key)
+
                 self.window.resultText.format_text(start_pos, end_pos, background=GREEN)
-                self.claim_model.reference_basis[claim_number][
-                    key
-                ].hasbasis_confirmed = True
 
                 self.format_text(
                     self.window.claimText,
@@ -171,10 +184,11 @@ class App(QApplication):
                     background=GREEN,
                 )
             else:
-                self.window.resultText.format_text(start_pos, end_pos, background="white")
-                self.claim_model.reference_basis[claim_number][
-                    key
-                ].hasbasis_confirmed = None
+                self.claim_model.reference_basis_confirmed.has_basis.remove(key)
+
+                self.window.resultText.format_text(
+                    start_pos, end_pos, background="white"
+                )
 
                 self.format_text(
                     self.window.claimText,
@@ -189,19 +203,16 @@ class App(QApplication):
         if data["type"] == "reference basis":
             start_pos, end_pos = data["position"]
             key = data["data"].position
-            claim_number = data["claim_num"]
 
             claim_position = data["data"].position
             claim_term = data["data"].term
             claim_pre, _ = data["data"].context.split(claim_term)
-            if (
-                self.claim_model.reference_basis[claim_number][key].hasbasis_confirmed
-                is not False
-            ):
+            if key not in self.claim_model.reference_basis_confirmed.lack_basis:
+                self.claim_model.reference_basis_confirmed.lack_basis.add(key)
+                if key in self.claim_model.reference_basis_confirmed.has_basis:
+                    self.claim_model.reference_basis_confirmed.has_basis.remove(key)
+
                 self.window.resultText.format_text(start_pos, end_pos, background=PINK)
-                self.claim_model.reference_basis[claim_number][
-                    key
-                ].hasbasis_confirmed = False
 
                 self.format_text(
                     self.window.claimText,
@@ -211,10 +222,11 @@ class App(QApplication):
                     background=PINK,
                 )
             else:
-                self.window.resultText.format_text(start_pos, end_pos, background="white")
-                self.claim_model.reference_basis[claim_number][
-                    key
-                ].hasbasis_confirmed = None
+                self.claim_model.reference_basis_confirmed.lack_basis.remove(key)
+
+                self.window.resultText.format_text(
+                    start_pos, end_pos, background="white"
+                )
 
                 self.format_text(
                     self.window.claimText,
@@ -244,13 +256,11 @@ class App(QApplication):
         cmp_result = self.cmp_model.compare()
         self.window.cmpWidget.format_text(cmp_result)
 
-    def format_text(
-        self, widget: QTextEdit | QTextBrowser, fun: Callable, **kwargs
-    ):
+    def format_text(self, widget: QTextEdit | QTextBrowser, fun: Callable, **kwargs):
         if isinstance(widget, QTextEdit):
-            widget.textChanged.disconnect(self.reset_claim_model)
+            widget.textChanged.disconnect(self._resume_first_check)
 
         fun(widget=widget, **kwargs)
 
         if isinstance(widget, QTextEdit):
-            widget.textChanged.connect(self.reset_claim_model)
+            widget.textChanged.connect(self._resume_first_check)

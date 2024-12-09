@@ -46,7 +46,7 @@ def test_parse_dependency_errors():
     claim_model = ClaimModel("")
     with pytest.raises(ValueError) as e:
         claim_model._parse_dependency("5 AND 6")
-    assert "权利要求引用撰写方式:`5 AND 6`未被处理, 请反馈Bug" in str(e.value)
+    assert "权项编号引用撰写方式: “<b>5 AND 6</b>” 未被处理, <br>未能正确解析权利要求请反馈Bug" in str(e.value)
 
 
 def test_get_reference_path():
@@ -139,6 +139,9 @@ def test_get_terminology(claims1):
 
     result = claim_model._get_terminology(claim_model.claims[7], 3)
     assert result["纳米线"] == (43, "所述纳米线第二掺杂类型的源区（16）")
+
+    result = claim_model._get_terminology(claim_model.claims[1], 2)
+    assert result['栅区'][1] == '所述栅区（4）为镜像对称的结构'
 
 
 @pytest.mark.parametrize(

@@ -25,7 +25,7 @@ from PyQt5.QtGui import (
 from PyQt5.QtCore import Qt
 
 from typing import Any
-from ..models import OpCode, RefBasis, SMALL_DEFECTS
+from ..models import OpCode, RefBasis, SMALL_DEFECTS, RefBasisConfirmed
 
 from . import resources_rc  # noqa: F401
 from .Ui_MainWindow import Ui_mainWindow
@@ -61,44 +61,51 @@ class Window(QMainWindow, Ui_mainWindow):
         self._apply_style_sheet()
 
     # --------------------- 显示引用缺陷检查结果 ------------------------
-    def display_reference_basis(self, ref_basis: dict[int, dict[int, RefBasis]]):
+    def display_reference_basis(
+        self, ref_basis: dict[int, dict[int, RefBasis]], confirmed: RefBasisConfirmed
+    ):
         n = 0
         for claim_number, bases in ref_basis.items():
             for position, basis in bases.items():
-                if basis.hasbasis_confirmed is False:
+                if position in confirmed.lack_basis:
                     start_pos, end_pos = self._format_ref_basis(
-                        n + 1, claim_number, basis
+                        n + 1, claim_number, basis, confirmed
                     )
                     self.resultText.format_text(start_pos, end_pos, background=PINK)
                     n += 1
                 elif (
-                    basis.hasbasis_confirmed is None and basis.hasbasis_checked is False
+                    position in confirmed.has_basis and self.showAllCheckBox.isChecked()
                 ):
                     start_pos, end_pos = self._format_ref_basis(
-                        n + 1, claim_number, basis
+                        n + 1, claim_number, basis, confirmed
                     )
-                    self.resultText.format_text(start_pos, end_pos, background=None)
+                    self.resultText.format_text(start_pos, end_pos, background=GREEN)
                     n += 1
-                elif basis.hasbasis_confirmed is None and isinstance(
-                    basis.hasbasis_checked, list
+                elif (
+                    basis.hasbasis_checked is False
+                    and position not in confirmed.has_basis
                 ):
                     start_pos, end_pos = self._format_ref_basis(
-                        n + 1, claim_number, basis
+                        n + 1, claim_number, basis, confirmed
                     )
                     self.resultText.format_text(start_pos, end_pos, background=None)
                     n += 1
                 elif (
-                    self.showAllCheckBox.isChecked()
-                    and basis.hasbasis_confirmed is True
+                    isinstance(basis.hasbasis_checked, list)
+                    and position not in confirmed.has_basis
                 ):
                     start_pos, end_pos = self._format_ref_basis(
-                        n + 1, claim_number, basis
+                        n + 1, claim_number, basis, confirmed
                     )
-                    self.resultText.format_text(start_pos, end_pos, background=GREEN)
+                    self.resultText.format_text(start_pos, end_pos, background=None)
                     n += 1
 
     def _format_ref_basis(
-        self, number: int, claim_number: int, basis: RefBasis
+        self,
+        number: int,
+        claim_number: int,
+        basis: RefBasis,
+        confirmed: RefBasisConfirmed,
     ) -> tuple[int, int]:
         if basis.term in basis.context:
             pre, post = basis.context.split(basis.term)
@@ -111,12 +118,13 @@ class Window(QMainWindow, Ui_mainWindow):
         )
         self.resultText.add_text(basis.term, foreground=RED, underline=True)
 
-        if basis.hasbasis_confirmed is True:
+        if basis.position in confirmed.has_basis:
             expr = "没有"
         elif basis.hasbasis_checked is False:
             expr = "存在"
-        else:
+        elif isinstance(basis.hasbasis_checked, list):
             expr = f"在引用路径不包括{', '.join(str(i) for i in basis.hasbasis_checked)}时存在"
+
         _, end_pos = self.resultText.add_text(
             f"{post}”{expr}缺乏引用基础的表述 ({basis.position})\n"
         )
@@ -200,12 +208,30 @@ class Window(QMainWindow, Ui_mainWindow):
         self.resultText.add_text("\n")
 
     def _format_no_title_domain(self, number: int, claim_numbers: list[int]):
-        pass
+        self.resultText.add_text(f"{number}、技术主题没有体现出技术领域的权利要求：")
+
+        for i, claim_num in enumerate(claim_numbers):
+            if i == len(claim_numbers) - 1:
+                text = f"[{claim_num}]"
+            else:
+                text = f"[{claim_num}]、"
+            data = {"type": "small defects", "data": claim_num}
+            self.resultText.add_text(text, bold=True, record_position=True, data=data)
+        self.resultText.add_text("\n")
 
     def _format_claim_phrases_unintegrity(
         self, number: int, claim_numbers: list[tuple[int, str]]
     ):
-        pass
+        self.resultText.add_text(f"{number}、“权利要求”这一措辞表述不完整的权利要求：")
+
+        for i, claim_num in enumerate(claim_numbers):
+            if i == len(claim_numbers) - 1:
+                text = f"[{claim_num[0]}中为“{claim_num[1]}”]"
+            else:
+                text = f"[{claim_num[0]}中为“{claim_num[1]}”]、"
+            data = {"type": "small defects", "data": claim_num[0]}
+            self.resultText.add_text(text, bold=True, record_position=True, data=data)
+        self.resultText.add_text("\n")
 
     # ------------------------- 添加工具栏小控件 ------------------------------------
     def _add_widgets_for_toolbar(self) -> None:
