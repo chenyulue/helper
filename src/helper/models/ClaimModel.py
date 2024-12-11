@@ -159,8 +159,8 @@ class ClaimModel:
     def _parse_dependency(self, deps: str | None) -> tuple[list[int], bool | None]:
         # 修改此处的正则表达式时，注意同步修改下面各条件分支中的表达
         OR_PATTERN = r"(?:\d+[、，或])*\d+或\d+"
-        AND_PATTERN = r"((?:\d+[、，和及])*\d+[和及]\d+).*?(任意?一)?.*"
-        RANGE_PATTERN = r"(\d+)\s*[-~至到]\s*(\d+).*?(任意?一)?.*"
+        AND_PATTERN = r"((?:\d+[、，和及])*\d+[和及]\d+)(.*任意?一)?.*"
+        RANGE_PATTERN = r"(\d+)\s*[-~至到]\s*(\d+)(.*任意?一)?.*"
 
         if deps is not None:
             deps = deps.strip()

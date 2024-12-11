@@ -31,10 +31,11 @@ def test_claim_model(claims1):
         ("4", [4], True),
         ("4或6", [4, 6], True),
         ("4、6或8", [4, 6, 8], True),
+        ("5-10中任一项", [5, 6, 7, 8, 9, 10], True),
         ("5-10任一项", [5, 6, 7, 8, 9, 10], True),
         ("5-10", [5, 6, 7, 8, 9, 10], False),
         ("5、6，7和8", [5, 6, 7, 8], False),
-        ("5、6、7和8任一项", [5, 6, 7, 8], True),
+        ("5、6、7和8中任一项", [5, 6, 7, 8], True),
     ],
 )
 def test_parse_dependency(deps, dependency, is_alternative):
@@ -169,9 +170,18 @@ def test_check_all_multiple_dependencies(claims1):
     assert claim_model.multiple_dependencies == {12: [7, 10]}
 
 
-def test_check_all_alternative_dependencies(claims1):
-    claim_model = ClaimModel(claims1)
-    assert claim_model.check_all_alternative_reference() == [10]
+# def test_check_all_alternative_dependencies(claims1):
+#     claim_model = ClaimModel(claims1)
+#     assert claim_model.check_all_alternative_reference() == [10]
+
+@pytest.mark.parametrize("claims,expected", [
+    ("1.一种装置，其包括A。\n2.如权利要求1所述的装置，其包括B。\n3.如权利要求1或2所述的装置，其包括C。", []),
+    ("1.一种装置，其包括A。\n2.如权利要求1所述的装置，其包括B。\n3.如权利要求1和2所述的装置，其包括C。", [3]),
+    ("1.一种装置，其包括A。\n2.如权利要求1所述的装置，其包括B。\n3.如权利要求1和2中任一项所述的装置，其包括C。", []),
+])
+def test_check_all_alternative_dependencies(claims, expected):
+    claim_model = ClaimModel(claims)
+    assert claim_model.check_all_alternative_reference() == expected
 
 
 @pytest.mark.parametrize(
