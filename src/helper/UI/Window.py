@@ -236,6 +236,8 @@ class Window(QMainWindow, Ui_mainWindow):
     # ------------------------- 添加工具栏小控件 ------------------------------------
     def _add_widgets_for_toolbar(self) -> None:
         self.segmentCheckBox = QCheckBox("分词模式", parent=self.widgetToolBar)
+        self.segmentCheckBox.setEnabled(False) # 分词模式暂时没有实现，取消勾选功能
+        
         label = QLabel("最短截词长度:", parent=self.widgetToolBar)
         self.lengthSpinBox = QSpinBox(parent=self.widgetToolBar)
         self.checkButton = QPushButton("检查", parent=self.widgetToolBar)

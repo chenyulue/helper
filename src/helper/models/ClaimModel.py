@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 import re
 import itertools
+
+from . import SearchModel
+
 from typing import Literal, TypeAlias, Any
 
 SPLIT_CLAIM = r"^(\d+)\.\s*([^，]+)，.+?(?:\n|$)(?:^[^\d\n].+?(?:\n|$))*"
@@ -11,6 +14,9 @@ TITLE_WITHOUT_DOMAIN = "一种装置|一种方法|一种工艺"
 SMALL_DEFECTS: TypeAlias = Literal[
     "non_alternative_reference", "no_title_domain", "claim_phrases_unintegrity"
 ]
+
+INDEFINITE_WORDS = ["左右", "约", "等", "可以?"]
+SENSITIVE_WORDS = ["中共", "编撰", "台湾", "修改"]
 
 
 @dataclass
@@ -78,7 +84,7 @@ class RefBasis:
 
 
 class RefBasisConfirmed:
-    def __init__(self, has_basis: set[int]=set(), lack_basis: set[int]=set()):
+    def __init__(self, has_basis: set[int] = set(), lack_basis: set[int] = set()):
         self.has_basis = set()
         self.lack_basis = set()
 
@@ -102,6 +108,10 @@ class ClaimModel:
 
         # 非择一引用缺陷结果、主题名称为体现技术领域及“权利要求”这4个字不完整
         self.small_defects: dict[SMALL_DEFECTS, list[Any]] = {}
+
+        # 涉嫌不清楚的措辞以及敏感的措辞
+        self.all_indefinite_words: dict[str, list[tuple[int, int]]] = {}
+        self.all_sensitive_words: dict[str, list[tuple[int, int]]] = {}
 
     def reset_model(self, new_claims: str) -> None:
         """根据新的权利要求文本重置ClaimModel：重新解析权利要求，并将相关的缺陷查询结果清空
@@ -378,7 +388,13 @@ class ClaimModel:
 
     # ======================= 检查权利要求中涉嫌不清楚以及敏感的词 =======================
     def check_all_indefinite_expression(self) -> None:
-        pass
+        if not self.all_indefinite_words:
+            pattern = "|".join(INDEFINITE_WORDS)
+            m = SearchModel(pattern)
+            self.all_indefinite_words = m.search(self._claims)
 
     def check_all_sensitive_expressioin(self) -> None:
-        pass
+        if not self.all_sensitive_words:
+            pattern = "|".join(SENSITIVE_WORDS)
+            m = SearchModel(pattern)
+            self.all_sensitive_words = m.search(self._claims)

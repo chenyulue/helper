@@ -8,7 +8,6 @@ dependencies = [
     "pyqt5-qt5==5.15.2",
     "PyQtDarkTheme-fork>=2.3.2",
     "cydifflib>=1.1.0",
-    "hanlp>=2.1.0b64",
 ]
 requires-python = ">=3.11,<3.13"
 readme = "README.md"
