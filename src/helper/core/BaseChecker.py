@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from ..models.BaseModel import BaseModel
+from .BaseModel import BaseModel
 
 class BaseChecker(ABC):
     """Base checker for all checkings."""
