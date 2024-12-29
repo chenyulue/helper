@@ -2,6 +2,9 @@
 
 from dataclasses import dataclass
 
+import string
+from typing import NamedTuple, TypeAlias
+
 
 @dataclass
 class Claim:
@@ -72,3 +75,6 @@ class RefBasisConfirmed:
 
     def __str__(self):
         return f"has basis: {self.has_basis}, lack basis: {self.lack_basis}"
+
+
+RefPath: TypeAlias = list[int]

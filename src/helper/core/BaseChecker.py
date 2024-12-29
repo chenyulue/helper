@@ -3,15 +3,16 @@ from abc import ABC, abstractmethod
 from .BaseModel import BaseModel
 
 class BaseChecker(ABC):
-    """Base checker for all checkings."""
+    """各种形式缺陷检查的基类"""
+
+    @abstractmethod
+    def __init__(self, data: BaseModel) -> None:
+        self._data = data
     @property
     @abstractmethod
     def name(self) -> str:
-        """The name of the checker, indicating what the defect is.
-        """
-        pass
+        """检查器的名称，用于指示所检查的形式缺陷类型"""
 
     @abstractmethod
-    def check(self, data: BaseModel):
-        """Check the data for the specific defect."""
-        pass
+    def check(self, *args, **kwargs):
+        """针对传递的数据进行特定缺陷的检查"""
