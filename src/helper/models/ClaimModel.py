@@ -150,11 +150,11 @@ class ClaimModel:
             result = self._reference_has_basis(claim, term, position[0], self.claims)
             if self.reference_basis.get(claim.number) is None:
                 self.reference_basis[claim.number] = {
-                    pos: RefBasis(pos, term, position[1], None, result)
+                    pos: RefBasis(pos, term, position[1], result)
                 }
             else:
                 self.reference_basis[claim.number].update(
-                    {pos: RefBasis(pos, term, position[1], None, result)}
+                    {pos: RefBasis(pos, term, position[1], result)}
                 )
 
     def _get_terminology(self, claim: Claim, length: int) -> dict[str, tuple[int, str]]:

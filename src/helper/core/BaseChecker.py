@@ -14,5 +14,5 @@ class BaseChecker(ABC):
         """检查器的名称，用于指示所检查的形式缺陷类型"""
 
     @abstractmethod
-    def check(self, *args, **kwargs):
+    def check(self, **kwargs):
         """针对传递的数据进行特定缺陷的检查"""

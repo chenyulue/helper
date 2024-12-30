@@ -2,8 +2,7 @@
 
 from dataclasses import dataclass
 
-import string
-from typing import NamedTuple, TypeAlias
+from typing import TypeAlias, NamedTuple
 
 
 @dataclass
@@ -58,7 +57,6 @@ class RefBasis:
     position: int
     term: str
     context: str
-    hasbasis_confirmed: bool | None
     hasbasis_checked: bool | list[int]
 
 
@@ -78,3 +76,17 @@ class RefBasisConfirmed:
 
 
 RefPath: TypeAlias = list[int]
+
+
+class ContextInfo(NamedTuple):
+    """记录技术特征的上下文信息
+
+    Parameters
+    ----------
+    pos : int
+        技术特征在权利要求中的位置
+    context : str
+        技术特征的上下文文本
+    """
+    pos: int
+    context: str
