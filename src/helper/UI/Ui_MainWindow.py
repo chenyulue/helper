@@ -20,27 +20,19 @@ class Ui_mainWindow(object):
         mainWindow.setObjectName("mainWindow")
         mainWindow.resize(699, 528)
         icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap(":/icons/app_blue.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off
-        )
+        icon.addPixmap(QtGui.QPixmap(":/icons/app_blue.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         mainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(mainWindow)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(
-            self.centralwidget.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
         self.centralwidget.setSizePolicy(sizePolicy)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout(self.centralwidget)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.splitter = QtWidgets.QSplitter(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(self.splitter.sizePolicy().hasHeightForWidth())
@@ -54,9 +46,7 @@ class Ui_mainWindow(object):
         font.setWeight(75)
         font.setStrikeOut(False)
         self.tabWidget.setFont(font)
-        self.tabWidget.setStyleSheet(
-            "QTextEdit {\n" "    font-size: 12px;\n" "    line-height: 1.5;\n" "}"
-        )
+        self.tabWidget.setStyleSheet("")
         self.tabWidget.setDocumentMode(True)
         self.tabWidget.setObjectName("tabWidget")
         self.tab = QtWidgets.QWidget()
@@ -71,7 +61,7 @@ class Ui_mainWindow(object):
         font.setStrikeOut(False)
         self.claimText.setFont(font)
         self.claimText.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-        self.claimText.setStyleSheet("QTextEdit {\n" "    font-size: 10pt;\n" "}")
+        self.claimText.setStyleSheet("")
         self.claimText.setObjectName("claimText")
         self.horizontalLayout_3.addWidget(self.claimText)
         self.tabWidget.addTab(self.tab, "")
@@ -85,9 +75,7 @@ class Ui_mainWindow(object):
         self.gridLayout.setVerticalSpacing(3)
         self.gridLayout.setObjectName("gridLayout")
         self.figureText = QtWidgets.QTextEdit(self.tab_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(self.figureText.sizePolicy().hasHeightForWidth())
@@ -100,7 +88,7 @@ class Ui_mainWindow(object):
         font.setWeight(50)
         font.setStrikeOut(False)
         self.figureText.setFont(font)
-        self.figureText.setStyleSheet("QTextEdit {\n" "    font-size: 10pt;\n" "}")
+        self.figureText.setStyleSheet("")
         self.figureText.setObjectName("figureText")
         self.gridLayout.addWidget(self.figureText, 1, 1, 1, 1)
         self.label = QtWidgets.QLabel(self.tab_3)
@@ -110,14 +98,10 @@ class Ui_mainWindow(object):
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 0, 1, 1, 1)
         self.descriptionText = QtWidgets.QTextEdit(self.tab_3)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(3)
         sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(
-            self.descriptionText.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.descriptionText.sizePolicy().hasHeightForWidth())
         self.descriptionText.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(10)
@@ -125,7 +109,7 @@ class Ui_mainWindow(object):
         font.setWeight(50)
         font.setStrikeOut(False)
         self.descriptionText.setFont(font)
-        self.descriptionText.setStyleSheet("QTextEdit {\n" "    font-size: 10pt;\n" "}")
+        self.descriptionText.setStyleSheet("")
         self.descriptionText.setObjectName("descriptionText")
         self.gridLayout.addWidget(self.descriptionText, 1, 0, 1, 1)
         self.gridLayout.setColumnStretch(0, 3)
@@ -144,7 +128,7 @@ class Ui_mainWindow(object):
         font.setWeight(50)
         font.setStrikeOut(False)
         self.abstractText.setFont(font)
-        self.abstractText.setStyleSheet("QTextEdit {\n" "    font-size: 10pt;\n" "}")
+        self.abstractText.setStyleSheet("")
         self.abstractText.setObjectName("abstractText")
         self.horizontalLayout_2.addWidget(self.abstractText)
         self.tabWidget.addTab(self.tab_2, "")
@@ -167,14 +151,10 @@ class Ui_mainWindow(object):
         self.horizontalLayout_4.setSpacing(3)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.claimCheckbox = QtWidgets.QCheckBox(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.claimCheckbox.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.claimCheckbox.sizePolicy().hasHeightForWidth())
         self.claimCheckbox.setSizePolicy(sizePolicy)
         self.claimCheckbox.setFocusPolicy(QtCore.Qt.NoFocus)
         self.claimCheckbox.setChecked(True)
@@ -186,14 +166,10 @@ class Ui_mainWindow(object):
         self.line.setObjectName("line")
         self.horizontalLayout_4.addWidget(self.line)
         self.descriptionCheckbox = QtWidgets.QCheckBox(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.descriptionCheckbox.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.descriptionCheckbox.sizePolicy().hasHeightForWidth())
         self.descriptionCheckbox.setSizePolicy(sizePolicy)
         self.descriptionCheckbox.setFocusPolicy(QtCore.Qt.NoFocus)
         self.descriptionCheckbox.setChecked(True)
@@ -205,22 +181,16 @@ class Ui_mainWindow(object):
         self.line_2.setObjectName("line_2")
         self.horizontalLayout_4.addWidget(self.line_2)
         self.abstractCheckbox = QtWidgets.QCheckBox(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.abstractCheckbox.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.abstractCheckbox.sizePolicy().hasHeightForWidth())
         self.abstractCheckbox.setSizePolicy(sizePolicy)
         self.abstractCheckbox.setFocusPolicy(QtCore.Qt.NoFocus)
         self.abstractCheckbox.setChecked(True)
         self.abstractCheckbox.setObjectName("abstractCheckbox")
         self.horizontalLayout_4.addWidget(self.abstractCheckbox)
-        spacerItem = QtWidgets.QSpacerItem(
-            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
-        )
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem)
         self.showAllCheckBox = QtWidgets.QCheckBox(self.layoutWidget)
         self.showAllCheckBox.setObjectName("showAllCheckBox")
@@ -228,9 +198,7 @@ class Ui_mainWindow(object):
         self.horizontalLayout_5.addLayout(self.horizontalLayout_4)
         self.verticalLayout.addLayout(self.horizontalLayout_5)
         self.resultText = QtWidgets.QTextBrowser(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.resultText.sizePolicy().hasHeightForWidth())
@@ -238,7 +206,7 @@ class Ui_mainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(10)
         self.resultText.setFont(font)
-        self.resultText.setStyleSheet("QTextEdit {\n" "    font-size: 10pt;\n" "}")
+        self.resultText.setStyleSheet("")
         self.resultText.setObjectName("resultText")
         self.verticalLayout.addWidget(self.resultText)
         self.horizontalLayout_6.addWidget(self.splitter)
@@ -267,94 +235,62 @@ class Ui_mainWindow(object):
         mainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.widgetToolBar)
         self.loginAction = QtWidgets.QAction(mainWindow)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(
-            QtGui.QPixmap(":/icons/login_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off
-        )
+        icon1.addPixmap(QtGui.QPixmap(":/icons/login_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.loginAction.setIcon(icon1)
         self.loginAction.setObjectName("loginAction")
         self.closeAction = QtWidgets.QAction(mainWindow)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(
-            QtGui.QPixmap(":/icons/close_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off
-        )
+        icon2.addPixmap(QtGui.QPixmap(":/icons/close_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.closeAction.setIcon(icon2)
         self.closeAction.setObjectName("closeAction")
         self.copyAction = QtWidgets.QAction(mainWindow)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(
-            QtGui.QPixmap(":/icons/copy_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off
-        )
+        icon3.addPixmap(QtGui.QPixmap(":/icons/copy_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.copyAction.setIcon(icon3)
         self.copyAction.setObjectName("copyAction")
         self.cutAction = QtWidgets.QAction(mainWindow)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(
-            QtGui.QPixmap(":/icons/cut_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off
-        )
+        icon4.addPixmap(QtGui.QPixmap(":/icons/cut_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.cutAction.setIcon(icon4)
         self.cutAction.setObjectName("cutAction")
         self.pasteAction = QtWidgets.QAction(mainWindow)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(
-            QtGui.QPixmap(":/icons/paste_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off
-        )
+        icon5.addPixmap(QtGui.QPixmap(":/icons/paste_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.pasteAction.setIcon(icon5)
         self.pasteAction.setObjectName("pasteAction")
         self.searchAction = QtWidgets.QAction(mainWindow)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(
-            QtGui.QPixmap(":/icons/search_blue.svg"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
+        icon6.addPixmap(QtGui.QPixmap(":/icons/search_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.searchAction.setIcon(icon6)
         self.searchAction.setObjectName("searchAction")
         self.cmpAction = QtWidgets.QAction(mainWindow)
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(
-            QtGui.QPixmap(":/icons/cmp_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off
-        )
+        icon7.addPixmap(QtGui.QPixmap(":/icons/cmp_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.cmpAction.setIcon(icon7)
         self.cmpAction.setObjectName("cmpAction")
         self.deadlineAction = QtWidgets.QAction(mainWindow)
         icon8 = QtGui.QIcon()
-        icon8.addPixmap(
-            QtGui.QPixmap(":/icons/calendar_blue.svg"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
+        icon8.addPixmap(QtGui.QPixmap(":/icons/calendar_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.deadlineAction.setIcon(icon8)
         self.deadlineAction.setObjectName("deadlineAction")
         self.archiveAction = QtWidgets.QAction(mainWindow)
         icon9 = QtGui.QIcon()
-        icon9.addPixmap(
-            QtGui.QPixmap(":/icons/archive_blue.svg"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
+        icon9.addPixmap(QtGui.QPixmap(":/icons/archive_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.archiveAction.setIcon(icon9)
         self.archiveAction.setObjectName("archiveAction")
         self.docAction = QtWidgets.QAction(mainWindow)
         icon10 = QtGui.QIcon()
-        icon10.addPixmap(
-            QtGui.QPixmap(":/icons/doc_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off
-        )
+        icon10.addPixmap(QtGui.QPixmap(":/icons/doc_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.docAction.setIcon(icon10)
         self.docAction.setObjectName("docAction")
         self.aboutAction = QtWidgets.QAction(mainWindow)
         icon11 = QtGui.QIcon()
-        icon11.addPixmap(
-            QtGui.QPixmap(":/icons/about_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off
-        )
+        icon11.addPixmap(QtGui.QPixmap(":/icons/about_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.aboutAction.setIcon(icon11)
         self.aboutAction.setObjectName("aboutAction")
         self.settingAction = QtWidgets.QAction(mainWindow)
         icon12 = QtGui.QIcon()
-        icon12.addPixmap(
-            QtGui.QPixmap(":/icons/setting_blue.svg"),
-            QtGui.QIcon.Normal,
-            QtGui.QIcon.Off,
-        )
+        icon12.addPixmap(QtGui.QPixmap(":/icons/setting_blue.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.settingAction.setIcon(icon12)
         self.settingAction.setObjectName("settingAction")
         self.menu.addAction(self.loginAction)
@@ -385,23 +321,17 @@ class Ui_mainWindow(object):
 
         self.retranslateUi(mainWindow)
         self.tabWidget.setCurrentIndex(0)
-        self.closeAction.triggered.connect(mainWindow.close)  # type: ignore
+        self.closeAction.triggered.connect(mainWindow.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(mainWindow)
 
     def retranslateUi(self, mainWindow):
         _translate = QtCore.QCoreApplication.translate
         mainWindow.setWindowTitle(_translate("mainWindow", "Helper-专利审查助手"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab), _translate("mainWindow", "权利要求书")
-        )
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("mainWindow", "权利要求书"))
         self.label.setText(_translate("mainWindow", "说明书:"))
         self.label_2.setText(_translate("mainWindow", "附图:"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_3), _translate("mainWindow", "说明书及附图")
-        )
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_2), _translate("mainWindow", "摘要")
-        )
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("mainWindow", "说明书及附图"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("mainWindow", "摘要"))
         self.label_3.setText(_translate("mainWindow", "查找结果"))
         self.claimCheckbox.setText(_translate("mainWindow", "权利要求"))
         self.descriptionCheckbox.setText(_translate("mainWindow", "说明书"))
@@ -415,9 +345,7 @@ class Ui_mainWindow(object):
         self.widgetToolBar.setWindowTitle(_translate("mainWindow", "toolBar_2"))
         self.loginAction.setText(_translate("mainWindow", "登录(&L)"))
         self.loginAction.setToolTip(_translate("mainWindow", "登录"))
-        self.loginAction.setStatusTip(
-            _translate("mainWindow", "登录i系统账号以获取审查数据")
-        )
+        self.loginAction.setStatusTip(_translate("mainWindow", "登录i系统账号以获取审查数据"))
         self.closeAction.setText(_translate("mainWindow", "关闭(&E)"))
         self.closeAction.setToolTip(_translate("mainWindow", "关闭此应用"))
         self.copyAction.setText(_translate("mainWindow", "复制(&C)"))
@@ -437,9 +365,7 @@ class Ui_mainWindow(object):
         self.cmpAction.setStatusTip(_translate("mainWindow", "打开文本比较器"))
         self.deadlineAction.setText(_translate("mainWindow", "周期管理(&Z)"))
         self.deadlineAction.setToolTip(_translate("mainWindow", "周期管理"))
-        self.deadlineAction.setStatusTip(
-            _translate("mainWindow", "查看和管理案件审查周期")
-        )
+        self.deadlineAction.setStatusTip(_translate("mainWindow", "查看和管理案件审查周期"))
         self.archiveAction.setText(_translate("mainWindow", "结案数据(&J)"))
         self.archiveAction.setToolTip(_translate("mainWindow", "结案数据"))
         self.archiveAction.setStatusTip(_translate("mainWindow", "查看当月结案数据"))
@@ -450,6 +376,4 @@ class Ui_mainWindow(object):
         self.settingAction.setText(_translate("mainWindow", "设置(&S)"))
         self.settingAction.setToolTip(_translate("mainWindow", "设置"))
         self.settingAction.setStatusTip(_translate("mainWindow", "设置"))
-
-
 from . import resources_rc

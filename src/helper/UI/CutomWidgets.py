@@ -7,6 +7,7 @@ from PyQt5.QtGui import (
     QTextCursor,
     QColor,
     QTextDocument,
+    QTextBlockFormat,
 )
 
 import bisect
@@ -22,7 +23,7 @@ class CustomTextBrowser(QTextBrowser):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        
+
         self.clickable_text = {}  # 记录信号传递的数据
         self.text_positions = []  # 记录文本位置及相关数据
         self.setTextInteractionFlags(Qt.NoTextInteraction)
@@ -56,9 +57,9 @@ class CustomTextBrowser(QTextBrowser):
         if background is not None:
             char_format.setBackground(QColor(background))
 
-        font = QFont()
-        font.setPointSize(DEFAULT_FONT_SIZE)
-        char_format.setFont(font, QTextCharFormat.FontPropertiesSpecifiedOnly)
+        # font = QFont()
+        # font.setPointSize(DEFAULT_FONT_SIZE)
+        # char_format.setFont(font, QTextCharFormat.FontPropertiesSpecifiedOnly)
 
         cursor.insertText(text, char_format)
 

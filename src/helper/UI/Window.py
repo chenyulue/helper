@@ -449,7 +449,7 @@ class Window(QMainWindow, Ui_mainWindow):
 
 
 class CmpWidget(QWidget, Ui_cmpWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget|None=None):
         super().__init__(parent)
         # loadUi(UI_PATH / "cmpWidget.ui", self)
         self.setupUi(self)

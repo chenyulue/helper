@@ -48,13 +48,10 @@
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">QTextEdit {
-    font-size: 12px;
-    line-height: 1.5;
-}</string>
+        <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -78,9 +75,7 @@
             <enum>Qt::DefaultContextMenu</enum>
            </property>
            <property name="styleSheet">
-            <string notr="true">QTextEdit {
-    font-size: 10pt;
-}</string>
+            <string notr="true"/>
            </property>
           </widget>
          </item>
@@ -131,9 +126,7 @@
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">QTextEdit {
-    font-size: 10pt;
-}</string>
+              <string notr="true"/>
              </property>
             </widget>
            </item>
@@ -171,9 +164,7 @@
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">QTextEdit {
-    font-size: 10pt;
-}</string>
+              <string notr="true"/>
              </property>
             </widget>
            </item>
@@ -197,9 +188,7 @@
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">QTextEdit {
-    font-size: 10pt;
-}</string>
+            <string notr="true"/>
            </property>
           </widget>
          </item>
@@ -340,9 +329,7 @@
            </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">QTextEdit {
-    font-size: 10pt;
-}</string>
+           <string notr="true"/>
           </property>
          </widget>
         </item>
