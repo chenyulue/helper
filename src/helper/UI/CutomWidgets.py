@@ -6,8 +6,6 @@ from PyQt5.QtGui import (
     QTextCharFormat,
     QTextCursor,
     QColor,
-    QTextDocument,
-    QTextBlockFormat,
 )
 
 import bisect
@@ -26,7 +24,7 @@ class CustomTextBrowser(QTextBrowser):
 
         self.clickable_text = {}  # 记录信号传递的数据
         self.text_positions = []  # 记录文本位置及相关数据
-        self.setTextInteractionFlags(Qt.NoTextInteraction)
+        self.setTextInteractionFlags(Qt.NoTextInteraction)  # type: ignore
 
     def add_text(
         self,
@@ -57,10 +55,6 @@ class CustomTextBrowser(QTextBrowser):
         if background is not None:
             char_format.setBackground(QColor(background))
 
-        # font = QFont()
-        # font.setPointSize(DEFAULT_FONT_SIZE)
-        # char_format.setFont(font, QTextCharFormat.FontPropertiesSpecifiedOnly)
-
         cursor.insertText(text, char_format)
 
         end_pos = cursor.position()
@@ -70,7 +64,7 @@ class CustomTextBrowser(QTextBrowser):
 
         return start_pos, end_pos
 
-    def format_text(
+    def add_extra_format(
         self,
         start_pos: int,
         end_pos: int,
@@ -123,14 +117,14 @@ class CustomTextBrowser(QTextBrowser):
         """
         重写鼠标按下事件，处理左键单击。
         """
-        if event.button() == Qt.LeftButton:
+        if event.button() == Qt.LeftButton:  # type: ignore
             data = self.handle_click(event)
             if data:
                 self.textClicked.emit(data, "<left>")
         super().mousePressEvent(event)
 
     def mouseDoubleClickEvent(self, event):
-        if event.button() == Qt.LeftButton:
+        if event.button() == Qt.LeftButton:  # type: ignore
             data = self.handle_click(event)
             if data:
                 self.textClicked.emit(data, "<double-L>")

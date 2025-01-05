@@ -2,33 +2,46 @@
 
 import re
 
-from collections.abc import Iterator
+from PyQt5.QtWidgets import QTextBrowser
 
-from ..core.BaseChecker import BaseChecker
+from ..core import BaseChecker
 from ..parser import ClaimModel
-from ..core.Types import Claim, RefBasis, ContextInfo
+from ..core.Types import Claim, RefBasis, ContextInfo, CheckType
+
+from .CheckManager import CheckManager
 
 
+@CheckManager.register("claim")
 class ReferenceBasisChecker(BaseChecker):
     """检查权利要求中引用的基础是否在之前的描述中清晰定义或提及"""
 
     def __init__(self, data: ClaimModel) -> None:
         self._data = data
 
-        self.has_basis: set[int] = set()    # 保存确认过的具有引用基础的权利要求编号
-        self.lack_basis: set[int] = set()   # 保存确认过的缺乏引用基础的权利要求编号
+        self.has_basis: set[int] = set()  # 保存确认过的具有引用基础的权利要求编号
+        self.lack_basis: set[int] = set()  # 保存确认过的缺乏引用基础的权利要求编号
 
     @property
-    def name(self) -> str:
-        return "Lack of Reference Basis"
+    def name(self) -> CheckType:
+        return CheckType.LackOfReferenceBasis
 
-    def update_has_basis(self, value: int) -> None:
-        self.has_basis.add(value)
+    def update_has_basis(self, value: int, add: bool = True) -> None:
+        if add:
+            self.has_basis.add(value)
+            if value in self.lack_basis:
+                self.lack_basis.remove(value)
+        else:
+            self.has_basis.remove(value)
 
-    def update_lack_basis(self, value: int) -> None:
-        self.lack_basis.add(value)
+    def update_lack_basis(self, value: int, add: bool = True) -> None:
+        if add:
+            self.lack_basis.add(value)
+            if value in self.has_basis:
+                self.has_basis.remove(value)
+        else:
+            self.lack_basis.remove(value)
 
-    def check(self, **kwargs: int) -> Iterator[tuple[int, dict[int, RefBasis]]]:
+    def check(self, **kwargs: int) -> dict[int, dict[int, RefBasis]]:
         """该函数根据特定的截词长度，检查权利要求书中所有缺乏引用基础的缺陷，其中，key是权利要求编号，
         value是针对每个权利要求的引用缺陷dict。在该引用缺陷dict中，其key值为该权利要求中存在*所述*
         等表述的技术特征在原始权利要求文本中的位置（用于后续在原始权利要求中定位并格式化相关特征表述），
@@ -51,9 +64,32 @@ class ReferenceBasisChecker(BaseChecker):
             )
 
         length = kwargs["length"]
+        result = {}
 
         for claim in self._data.claims:
-            yield (claim.number, self._check_reference_basis(claim, length))
+            result[claim.number] = self._check_reference_basis(claim, length)
+
+        return result
+
+    def display(
+        self,
+        where: QTextBrowser,
+        result: dict[int, dict[int, RefBasis]],
+        **kwargs: bool,
+    ) -> None:
+        """该函数用于在GUI界面上显示检查结果
+
+        Parameters
+        ----------
+        where : QTextBrowser
+            检查结果显示的位置
+        result : dict[int, dict[int, RefBasis]]
+            检查结果
+        """
+        if kwargs.get("show_claim", True):
+            where.display_reference_basis(
+                result, self.has_basis, self.lack_basis, self.get_all_reference_paths()
+            )
 
     def get_all_reference_paths(self) -> dict[int, list[int]]:
         """获取所有权利要求的引用路径

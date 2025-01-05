@@ -59,6 +59,7 @@ build_ui = {composite = [
 [tool.pdm.dev-dependencies]
 test = [
     "pytest>=8.3.3",
+    "pytest-mock>=3.14.0",
 ]
 package = [
     "cx-Freeze>=7.2.5",

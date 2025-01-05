@@ -51,7 +51,7 @@
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="documentMode">
         <bool>true</bool>
@@ -72,7 +72,7 @@
             </font>
            </property>
            <property name="contextMenuPolicy">
-            <enum>Qt::DefaultContextMenu</enum>
+            <enum>Qt::CustomContextMenu</enum>
            </property>
            <property name="styleSheet">
             <string notr="true"/>
@@ -125,6 +125,9 @@
                <strikeout>false</strikeout>
               </font>
              </property>
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
              <property name="styleSheet">
               <string notr="true"/>
              </property>
@@ -163,6 +166,9 @@
                <strikeout>false</strikeout>
               </font>
              </property>
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
              <property name="styleSheet">
               <string notr="true"/>
              </property>
@@ -186,6 +192,9 @@
              <bold>false</bold>
              <strikeout>false</strikeout>
             </font>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
            </property>
            <property name="styleSheet">
             <string notr="true"/>
@@ -328,6 +337,9 @@
             <pointsize>10</pointsize>
            </font>
           </property>
+          <property name="contextMenuPolicy">
+           <enum>Qt::DefaultContextMenu</enum>
+          </property>
           <property name="styleSheet">
            <string notr="true"/>
           </property>
@@ -360,9 +372,15 @@
     <property name="title">
      <string>编辑(&amp;E)</string>
     </property>
+    <addaction name="undoAction"/>
+    <addaction name="redoAction"/>
+    <addaction name="separator"/>
     <addaction name="copyAction"/>
     <addaction name="cutAction"/>
     <addaction name="pasteAction"/>
+    <addaction name="pastePlainTextAction"/>
+    <addaction name="separator"/>
+    <addaction name="selectAllAction"/>
     <addaction name="separator"/>
     <addaction name="searchAction"/>
    </widget>
@@ -592,6 +610,54 @@
    </property>
    <property name="statusTip">
     <string>设置</string>
+   </property>
+  </action>
+  <action name="pastePlainTextAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/paste_text_blue.svg</normaloff>:/icons/paste_text_blue.svg</iconset>
+   </property>
+   <property name="text">
+    <string>粘贴为纯文本</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+V</string>
+   </property>
+  </action>
+  <action name="undoAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/undo_blue.svg</normaloff>:/icons/undo_blue.svg</iconset>
+   </property>
+   <property name="text">
+    <string>撤销</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="redoAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/redo_blue.svg</normaloff>:/icons/redo_blue.svg</iconset>
+   </property>
+   <property name="text">
+    <string>重做</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="selectAllAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/selectall_blue.svg</normaloff>:/icons/selectall_blue.svg</iconset>
+   </property>
+   <property name="text">
+    <string>全选</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
    </property>
   </action>
  </widget>

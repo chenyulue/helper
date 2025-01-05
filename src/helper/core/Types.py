@@ -1,6 +1,7 @@
 """该模块定义了helper所使用的一些数据类型"""
 
 from dataclasses import dataclass
+from enum import Enum
 
 from typing import TypeAlias, NamedTuple
 
@@ -90,3 +91,9 @@ class ContextInfo(NamedTuple):
     """
     pos: int
     context: str
+
+
+class CheckType(Enum):
+    """检查类型列举"""
+    CheckReferencePaths = "Check Reference Paths"
+    LackOfReferenceBasis = "Lack of Reference Basis"

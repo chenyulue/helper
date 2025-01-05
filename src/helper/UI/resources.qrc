@@ -1,9 +1,13 @@
 <RCC>
   <qresource prefix="icons">
     <file alias="avsb_blue.svg">../assets/icons/AvsB_BLUE.svg</file>
+    <file alias="paste_text_blue.svg">../assets/icons/PASTE_TEXT_BLUE.svg</file>
     <file alias="search_blue.svg">../assets/icons/SEARCH_BLUE.svg</file>
     <file alias="app_blue.ico">../assets/icons/APP-BLUE.ico</file>
     <file alias="paste_blue.svg">../assets/icons/PASTE_BLUE.svg</file>
+    <file alias="redo_blue.svg">../assets/icons/REDO_BLUE.svg</file>
+    <file alias="selectall_blue.svg">../assets/icons/SELECT_ALL_BLUE.svg</file>
+    <file alias="undo_blue.svg">../assets/icons/UNDO_BLUE.svg</file>
     <file alias="cut_blue.svg">../assets/icons/CUT_BLUE.svg</file>
     <file alias="copy_blue.svg">../assets/icons/COPY_BLUE.svg</file>
     <file alias="close_blue.svg">../assets/icons/CLOSE_BLUE.svg</file>
