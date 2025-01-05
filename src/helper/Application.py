@@ -51,6 +51,9 @@ class Application(QApplication):
         self.main_window.abstractCheckbox.stateChanged.connect(
             lambda: self.display_checkers(self.results)
         )
+        self.main_window.showAllCheckBox.stateChanged.connect(
+            lambda: self.display_checkers(self.results)
+        )
 
         self.main_window.pastePlainTextAction.triggered.connect(self._paste_plain_text)
 
