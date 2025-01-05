@@ -32,6 +32,9 @@ class Application(QApplication):
 
         self.main_window = MainWindow()
 
+        self.results = {}
+        self.claim_checkers = {}
+
         self.connect_signals_and_slots()
 
         self.main_window.show()

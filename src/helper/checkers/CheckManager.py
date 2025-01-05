@@ -9,10 +9,13 @@ class CheckManager:
     checkers = defaultdict(list)
 
     @classmethod
-    def register(cls, kind: str):
+    def register(cls, kind: str, index: int | None = None):
         def inner_wrapper(other: type[CheckT]) -> type[CheckT]:
             if other not in cls.checkers[kind]:
-                cls.checkers[kind].append(other)
+                if index is None:
+                    cls.checkers[kind].append(other)
+                else:
+                    cls.checkers[kind].insert(index, other)
             return other
 
         return inner_wrapper

@@ -11,7 +11,7 @@ from ..core.Types import Claim, RefBasis, ContextInfo, CheckType
 from .CheckManager import CheckManager
 
 
-@CheckManager.register("claim")
+@CheckManager.register("claim", 0)
 class ReferenceBasisChecker(BaseChecker):
     """检查权利要求中引用的基础是否在之前的描述中清晰定义或提及"""
 
