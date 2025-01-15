@@ -25,7 +25,7 @@ from PyQt5.QtGui import (
 from PyQt5.QtCore import Qt
 
 from . import resources_rc  # noqa: F401
-from .Ui_MainWindow import Ui_mainWindow
+from ._GeneratedUI.Ui_MainWindow import Ui_mainWindow
 
 from . import AboutDialog, SearchDialog, RefDialog, CmpWidget
 
@@ -40,7 +40,7 @@ class MainWindow(QMainWindow, Ui_mainWindow):
         super().__init__(parent)
         self.setupUi(self)
 
-        self.config = config or TextFormatterConfig()
+        self.config = config or TextFormatterConfig.new()
 
         self.aboutDialog = AboutDialog(self)
         self.searchDialog = SearchDialog(self)
@@ -155,6 +155,39 @@ class MainWindow(QMainWindow, Ui_mainWindow):
 
         return start_pos, end_pos
 
+    # ================ 多引多缺陷展示 ====================================
+    def display_multiple_dependencies(self, multi_deps: dict[int, list[int]]) -> None:
+        n = 0
+        start_pos, end_pos = self.resultText.add_text(
+            "☛ 多引多缺陷\n", bold=True, underline=True
+        )
+        self.resultText.add_extra_format(start_pos, end_pos, background="white")
+
+        for claim_num, deps in multi_deps.items():
+            start_pos, end_pos = self._format_multiple_deps(n + 1, claim_num, deps)
+            self.resultText.add_extra_format(start_pos, end_pos, background="white")
+            n += 1
+
+    def _format_multiple_deps(
+        self, number: int, claim_num: int, deps: list[int]
+    ) -> tuple[int, int]:
+        deps_str = ", ".join(str(i) for i in deps)
+
+        start_pos, _ = self.resultText.add_text(
+            f"{number}、权利要求{claim_num}引用权项"
+        )
+        self.resultText.add_text(f"{deps_str}", bold=True)
+        _, end_pos = self.resultText.add_text("时存在多引多的缺陷\n")
+
+        data = {
+            "type": CheckType.MultiDependency,
+            "data": [claim_num, deps],
+            "position": (start_pos, end_pos),
+        }
+        self.resultText.add_clickable_position(start_pos, end_pos, data)
+
+        return start_pos, end_pos
+
     def _connect_signals_and_slots(self):
         self.aboutAction.triggered.connect(self._showAboutDialog)
         self.cmpAction.triggered.connect(self._showCmpWidget)
@@ -242,7 +275,7 @@ class MainWindow(QMainWindow, Ui_mainWindow):
 
         menu.addAction(self.selectAllAction)
 
-        menu.exec_(text_edit.mapToGlobal(position)) # type: ignore
+        menu.exec_(text_edit.mapToGlobal(position))  # type: ignore
 
     def _clear_text(self):
         for child in self._get_all_children():

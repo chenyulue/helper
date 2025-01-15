@@ -24,27 +24,27 @@ build-backend = "pdm.backend"
 distribution = true
 
 [tool.pdm.scripts]
-build_resource = "pyrcc5 -o src/helper/UI/resources_rc.py src/helper/UI/resources.qrc"
+build_resource = "pyrcc5 -o src/helper/UI/_GeneratedUI/resources_rc.py src/helper/UI/resources.qrc"
 
 build_mainwindow = {composite = [
-    "pyuic5 -o src/helper/UI/Ui_MainWindow.py src/helper/UI/mainWindow.ui",
-    "trans_import.py src/helper/UI/Ui_MainWindow.py"
+    "pyuic5 -o src/helper/UI/_GeneratedUI/Ui_MainWindow.py src/helper/UI/_GeneratedUI/mainWindow.ui",
+    "trans_import.py src/helper/UI/_GeneratedUI/Ui_MainWindow.py"
 ]}
 build_about_dialog = {composite = [
-    "pyuic5 -o src/helper/UI/Ui_AboutDialog.py src/helper/UI/aboutDialog.ui",
-    "trans_import.py src/helper/UI/Ui_AboutDialog.py"
+    "pyuic5 -o src/helper/UI/_GeneratedUI/Ui_AboutDialog.py src/helper/UI/_GeneratedUI/aboutDialog.ui",
+    "trans_import.py src/helper/UI/_GeneratedUI/Ui_AboutDialog.py"
 ]}
 build_cmpwindow = {composite = [
-    "pyuic5 -o src/helper/UI/Ui_CmpWidget.py src/helper/UI/cmpWidget.ui",
-    "trans_import.py src/helper/UI/Ui_CmpWidget.py"
+    "pyuic5 -o src/helper/UI/_GeneratedUI/Ui_CmpWidget.py src/helper/UI/_GeneratedUI/cmpWidget.ui",
+    "trans_import.py src/helper/UI/_GeneratedUI/Ui_CmpWidget.py"
 ]}
 build_search_dialog = {composite = [
-    "pyuic5 -o src/helper/UI/Ui_SearchDialog.py src/helper/UI/searchDialog.ui",
-    "trans_import.py src/helper/UI/Ui_SearchDialog.py"
+    "pyuic5 -o src/helper/UI/_GeneratedUI/Ui_SearchDialog.py src/helper/UI/_GeneratedUI/searchDialog.ui",
+    "trans_import.py src/helper/UI/_GeneratedUI/Ui_SearchDialog.py"
 ]}
 build_ref_dialog = {composite = [
-    "pyuic5 -o src/helper/UI/Ui_RefDialog.py src/helper/UI/refDialog.ui",
-    "trans_import.py src/helper/UI/Ui_RefDialog.py"
+    "pyuic5 -o src/helper/UI/_GeneratedUI/Ui_RefDialog.py src/helper/UI/_GeneratedUI/refDialog.ui",
+    "trans_import.py src/helper/UI/_GeneratedUI/Ui_RefDialog.py"
 ]}
 
 build_ui = {composite = [

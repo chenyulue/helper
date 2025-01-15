@@ -97,3 +97,4 @@ class CheckType(Enum):
     """检查类型列举"""
     CheckReferencePaths = "Check Reference Paths"
     LackOfReferenceBasis = "Lack of Reference Basis"
+    MultiDependency = "Multi-Dependency"

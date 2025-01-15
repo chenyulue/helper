@@ -27,12 +27,12 @@ from PyQt5.QtCore import Qt
 from typing import Any
 from ..models import OpCode, RefBasis, SMALL_DEFECTS, RefBasisConfirmed
 
-from . import resources_rc  # noqa: F401
-from .Ui_MainWindow import Ui_mainWindow
-from .Ui_CmpWidget import Ui_cmpWidget
-from .Ui_AboutDialog import Ui_aboutDialog
-from .Ui_SearchDialog import Ui_searchDialog
-from .Ui_RefDialog import Ui_refDialog
+from ._GeneratedUI import resources_rc  # noqa: F401
+from ._GeneratedUI.Ui_MainWindow import Ui_mainWindow
+from ._GeneratedUI.Ui_CmpWidget import Ui_cmpWidget
+from ._GeneratedUI.Ui_AboutDialog import Ui_aboutDialog
+from ._GeneratedUI.Ui_SearchDialog import Ui_searchDialog
+from ._GeneratedUI.Ui_RefDialog import Ui_refDialog
 
 RED = "red"
 BLUE = "blue"

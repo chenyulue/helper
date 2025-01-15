@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from .CutomWidgets import CustomTextBrowser
+from ..CutomWidgets import CustomTextBrowser
 
 QtWidgets.QTextBrowser = CustomTextBrowser
 
